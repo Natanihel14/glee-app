@@ -4,7 +4,7 @@
   → Información del producto → Agregar bloque → "Liquid personalizado".
 
   Para ajustar: cambia MIN_DIAS y MAX_DIAS (días hábiles después de confirmado el pago).
-  No se cuentan los domingos.
+  No se cuentan sábados ni domingos (igual que Shopify en el checkout).
 {% endcomment %}
 <div class="glee-entrega" style="padding:12px 14px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin:14px 0;font-size:.95em;line-height:1.45">
   <p style="margin:0 0 6px">
@@ -23,7 +23,7 @@
       var d = new Date(fecha);
       while (n > 0) {
         d.setDate(d.getDate() + 1);
-        if (d.getDay() !== 0) n--; // 0 = domingo
+        if (d.getDay() !== 0 && d.getDay() !== 6) n--; // 0 = domingo, 6 = sábado
       }
       return d;
     }

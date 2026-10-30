@@ -48,7 +48,7 @@ WhatsApp [5XXX-XXXX] y lo resolvemos.
 
 ```
 Enviamos a toda Guatemala. Tu pedido llega en 2 a 4 días hábiles después de confirmado
-tu pago (no contamos domingos ni feriados). Cuando tu pedido salga, te avisaremos por WhatsApp.
+tu pago (no contamos fines de semana ni feriados). Cuando tu pedido salga, te avisaremos por WhatsApp.
 ```
 
 ## 5. Aviso en la página del producto
