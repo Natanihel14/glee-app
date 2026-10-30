@@ -7,7 +7,7 @@ Textos para pegar en Shopify. Lo que está entre corchetes `[...]` hay que compl
 - Estimaciones de entrega: **Manual**, tiempo de preparación **mismo día**
 - Ciudad Capital: "Envío dentro de Ciudad Capital", Q30, tránsito **2 a 4 días hábiles**
 - Departamentos: "Envío a interior del país", Q35, tránsito **2 a 4 días hábiles**
-- Hora límite: pedidos antes de las 5:30 p. m. (lunes a viernes) salen el mismo día
+- Hora límite: pedidos antes de las 5:00 p. m. (lunes a viernes) salen el mismo día
 
 ## 2. Instrucciones de pago (transferencia)
 
@@ -20,7 +20,7 @@ Cuenta: [tipo y número de cuenta]
 A nombre de: [nombre]
 
 Luego envía tu comprobante y tu número de pedido a nuestro WhatsApp [5XXX-XXXX].
-Enviamos tu pedido el mismo día si lo haces y pagas antes de las 5:30 p. m. (lunes a viernes).
+Enviamos tu pedido el mismo día si lo haces y pagas antes de las 5:00 p. m. (lunes a viernes).
 Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
 ```
 
@@ -31,7 +31,7 @@ Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
 ```
 TIEMPO DE ENTREGA
 Tu pedido llega en 2 a 4 días hábiles a todo el país. Normalmente llega en 2 a 3 días hábiles.
-Los pedidos hechos y pagados antes de las 5:30 p. m. (lunes a viernes) salen el mismo día;
+Los pedidos hechos y pagados antes de las 5:00 p. m. (lunes a viernes) salen el mismo día;
 después de esa hora, o en fin de semana, salen el siguiente día hábil.
 No contamos sábados, domingos ni feriados.
 
@@ -54,7 +54,7 @@ Enviamos a toda Guatemala:
 - Ciudad Capital: Q30
 - Departamentos: Q35
 Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
-Los pedidos hechos y pagados antes de las 5:30 p. m. (lunes a viernes) salen el mismo día.
+Los pedidos hechos y pagados antes de las 5:00 p. m. (lunes a viernes) salen el mismo día.
 No contamos sábados, domingos ni feriados. Cuando tu pedido salga, te avisaremos por WhatsApp.
 ```
 

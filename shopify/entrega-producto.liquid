@@ -5,7 +5,7 @@
 
   Reglas (hora de Guatemala):
   - Entrega en 2 a 4 días hábiles (normalmente 2 a 3), igual en todas las zonas.
-  - Pedidos antes de las 5:30 p. m. de lunes a viernes salen el mismo día;
+  - Pedidos antes de las 5:00 p. m. de lunes a viernes salen el mismo día;
     después de esa hora, o en fin de semana, salen el siguiente día hábil.
   - No se cuentan sábados ni domingos.
 {% endcomment %}
@@ -29,7 +29,7 @@
   <p class="glee-entrega__fecha">Recíbelo entre el <strong class="glee-desde">—</strong> y el <strong class="glee-hasta">—</strong></p>
   <p class="glee-entrega__normal">Normalmente llega en 2 a 3 días hábiles.</p>
   <p class="glee-entrega__nota">
-    Pedidos hechos y pagados antes de las 5:30 p. m. salen el mismo día. No contamos sábados ni domingos.
+    Pedidos hechos y pagados antes de las 5:00 p. m. salen el mismo día. No contamos sábados ni domingos.
     Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
     <a href="/policies/refund-policy">Ver política</a>
   </p>
@@ -37,7 +37,7 @@
 <script>
   (function () {
     var DIAS_ENTREGA = [2, 4];     // días hábiles (mínimo, máximo)
-    var HORA_LIMITE = 17 * 60 + 30; // 5:30 p. m., en minutos
+    var HORA_LIMITE = 17 * 60;      // 5:00 p. m., en minutos
 
     var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
     var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
