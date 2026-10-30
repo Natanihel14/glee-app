@@ -8,13 +8,27 @@
   - CAPITAL / DEPARTAMENTOS = "Tiempo de tránsito" de cada tarifa
   No se cuentan sábados ni domingos (igual que Shopify en el checkout).
 {% endcomment %}
-<div class="glee-entrega" style="padding:12px 14px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin:14px 0;font-size:.95em;line-height:1.45">
-  <p style="margin:0 0 8px"><strong>🚚 Si confirmas tu pago hoy, recíbelo:</strong></p>
-  <p style="margin:0 0 4px">📍 <strong>Ciudad Capital:</strong> entre el <span class="glee-capital-desde">—</span> y el <span class="glee-capital-hasta">—</span></p>
-  <p style="margin:0 0 8px">📍 <strong>Departamentos:</strong> entre el <span class="glee-depto-desde">—</span> y el <span class="glee-depto-hasta">—</span></p>
-  <p style="margin:0;opacity:.75;font-size:.9em">
+<style>
+  .glee-entrega { border: 1px solid rgba(0,0,0,.12); padding: 14px 16px; margin: 14px 0; line-height: 1.4; }
+  .glee-entrega__titulo { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: .78em; letter-spacing: .18em; text-transform: uppercase; }
+  .glee-entrega__titulo svg { width: 20px; height: 20px; flex: none; }
+  .glee-entrega__fila { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid rgba(0,0,0,.08); font-size: .92em; }
+  .glee-entrega__fila span:last-child { font-weight: 600; text-align: right; }
+  .glee-entrega__nota { margin: 10px 0 0; font-size: .82em; opacity: .7; }
+  .glee-entrega__nota a { text-decoration: underline; }
+</style>
+<div class="glee-entrega">
+  <p class="glee-entrega__titulo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2 6.5h11v9H2zM13 9.5h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/>
+    </svg>
+    Entrega estimada si pagas hoy
+  </p>
+  <div class="glee-entrega__fila"><span>Ciudad Capital</span><span class="glee-capital">—</span></div>
+  <div class="glee-entrega__fila"><span>Departamentos</span><span class="glee-depto">—</span></div>
+  <p class="glee-entrega__nota">
     Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
-    <a href="/policies/refund-policy" style="text-decoration:underline">Ver política</a>
+    <a href="/policies/refund-policy">Ver política</a>
   </p>
 </div>
 <script>
@@ -22,6 +36,9 @@
     var PREPARACION = 0;          // días hábiles para preparar el pedido (0 = mismo día)
     var CAPITAL = [1, 3];         // días hábiles de tránsito en Ciudad Capital
     var DEPARTAMENTOS = [3, 5];   // días hábiles de tránsito a departamentos
+
+    var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
     function sumarDiasHabiles(fecha, n) {
       var d = new Date(fecha);
@@ -32,16 +49,20 @@
       return d;
     }
 
-    var formato = new Intl.DateTimeFormat('es-GT', { weekday: 'long', day: 'numeric', month: 'long' });
-    var hoy = new Date();
-    function fecha(dias) { return formato.format(sumarDiasHabiles(hoy, PREPARACION + dias)); }
+    // "lun 2 – mié 4 nov" o "vie 30 oct – mar 3 nov"
+    function rango(dias) {
+      var hoy = new Date();
+      var a = sumarDiasHabiles(hoy, PREPARACION + dias[0]);
+      var b = sumarDiasHabiles(hoy, PREPARACION + dias[1]);
+      var desde = DIAS[a.getDay()] + ' ' + a.getDate() + (a.getMonth() !== b.getMonth() ? ' ' + MESES[a.getMonth()] : '');
+      return desde + ' – ' + DIAS[b.getDay()] + ' ' + b.getDate() + ' ' + MESES[b.getMonth()];
+    }
+
     function poner(clase, texto) {
       document.querySelectorAll(clase).forEach(function (el) { el.textContent = texto; });
     }
 
-    poner('.glee-capital-desde', fecha(CAPITAL[0]));
-    poner('.glee-capital-hasta', fecha(CAPITAL[1]));
-    poner('.glee-depto-desde', fecha(DEPARTAMENTOS[0]));
-    poner('.glee-depto-hasta', fecha(DEPARTAMENTOS[1]));
+    poner('.glee-capital', rango(CAPITAL));
+    poner('.glee-depto', rango(DEPARTAMENTOS));
   })();
 </script>
