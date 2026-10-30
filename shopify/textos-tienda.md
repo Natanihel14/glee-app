@@ -2,13 +2,11 @@
 
 Textos para pegar en Shopify. Lo que está entre corchetes `[...]` hay que completarlo.
 
-## 1. Nombre de la tarifa de envío
+## 1. Envío y entrega (ya configurado)
 
-*Configuración → Envío y entrega → Envíos → (perfil general) → zona Guatemala → editar tarifa → Nombre*
-
-```
-Envío estándar – llega en 2 a 4 días hábiles después de confirmado tu pago
-```
+- Estimaciones de entrega: **Manual**, tiempo de preparación **1 día hábil**
+- Ciudad Capital: "Envío dentro de Ciudad Capital", Q30, tránsito **1 a 3 días hábiles**
+- Departamentos: "Envío a interior del país", Q35, tránsito **3 a 5 días hábiles**
 
 ## 2. Instrucciones de pago (transferencia)
 
@@ -21,7 +19,8 @@ Cuenta: [tipo y número de cuenta]
 A nombre de: [nombre]
 
 Luego envía tu comprobante y tu número de pedido a nuestro WhatsApp [5XXX-XXXX].
-Tu pedido llega en 2 a 4 días hábiles después de confirmado tu pago.
+Preparamos tu pedido 1 día hábil después de confirmado tu pago y luego tarda en llegar:
+Ciudad Capital: 1 a 3 días hábiles · Departamentos: 3 a 5 días hábiles.
 ```
 
 ## 3. Política de reembolso
@@ -30,7 +29,9 @@ Tu pedido llega en 2 a 4 días hábiles después de confirmado tu pago.
 
 ```
 TIEMPO DE ENTREGA
-Tu pedido llega en 2 a 4 días hábiles después de confirmado tu pago.
+Preparamos tu pedido 1 día hábil después de confirmado tu pago. Luego el envío tarda:
+- Ciudad Capital: 1 a 3 días hábiles
+- Departamentos: 3 a 5 días hábiles
 
 CANCELACIONES
 Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
@@ -47,8 +48,11 @@ WhatsApp [5XXX-XXXX] y lo resolvemos.
 *Configuración → Políticas → Política de envío*
 
 ```
-Enviamos a toda Guatemala. Tu pedido llega en 2 a 4 días hábiles después de confirmado
-tu pago (no contamos fines de semana ni feriados). Cuando tu pedido salga, te avisaremos por WhatsApp.
+Enviamos a toda Guatemala. Preparamos tu pedido 1 día hábil después de confirmado tu pago.
+Luego el envío tarda:
+- Ciudad Capital: 1 a 3 días hábiles (Q30)
+- Departamentos: 3 a 5 días hábiles (Q35)
+No contamos fines de semana ni feriados. Cuando tu pedido salga, te avisaremos por WhatsApp.
 ```
 
 ## 5. Aviso en la página del producto

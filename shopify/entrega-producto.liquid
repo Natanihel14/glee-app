@@ -1,15 +1,17 @@
 {% comment %}
-  Aviso de fecha estimada de entrega + política de cancelación.
+  Aviso de fecha estimada de entrega (Ciudad Capital y Departamentos) + política de cancelación.
   Dónde va: Tienda online → Temas → Personalizar → Productos → Producto predeterminado
   → Información del producto → Agregar bloque → "Liquid personalizado".
 
-  Para ajustar: cambia MIN_DIAS y MAX_DIAS (días hábiles después de confirmado el pago).
+  Debe coincidir con Configuración → Envío y entrega:
+  - PREPARACION = "Tiempo de preparación de pedidos" (Estimaciones de entrega)
+  - CAPITAL / DEPARTAMENTOS = "Tiempo de tránsito" de cada tarifa
   No se cuentan sábados ni domingos (igual que Shopify en el checkout).
 {% endcomment %}
 <div class="glee-entrega" style="padding:12px 14px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin:14px 0;font-size:.95em;line-height:1.45">
-  <p style="margin:0 0 6px">
-    🚚 <strong>Si confirmas tu pago hoy, recíbelo entre el <span class="glee-desde">—</span> y el <span class="glee-hasta">—</span>.</strong>
-  </p>
+  <p style="margin:0 0 8px"><strong>🚚 Si confirmas tu pago hoy, recíbelo:</strong></p>
+  <p style="margin:0 0 4px">📍 <strong>Ciudad Capital:</strong> entre el <span class="glee-capital-desde">—</span> y el <span class="glee-capital-hasta">—</span></p>
+  <p style="margin:0 0 8px">📍 <strong>Departamentos:</strong> entre el <span class="glee-depto-desde">—</span> y el <span class="glee-depto-hasta">—</span></p>
   <p style="margin:0;opacity:.75;font-size:.9em">
     Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
     <a href="/policies/refund-policy" style="text-decoration:underline">Ver política</a>
@@ -17,7 +19,9 @@
 </div>
 <script>
   (function () {
-    var MIN_DIAS = 2, MAX_DIAS = 4;
+    var PREPARACION = 1;          // días hábiles para preparar el pedido
+    var CAPITAL = [1, 3];         // días hábiles de tránsito en Ciudad Capital
+    var DEPARTAMENTOS = [3, 5];   // días hábiles de tránsito a departamentos
 
     function sumarDiasHabiles(fecha, n) {
       var d = new Date(fecha);
@@ -30,10 +34,14 @@
 
     var formato = new Intl.DateTimeFormat('es-GT', { weekday: 'long', day: 'numeric', month: 'long' });
     var hoy = new Date();
-    var desde = formato.format(sumarDiasHabiles(hoy, MIN_DIAS));
-    var hasta = formato.format(sumarDiasHabiles(hoy, MAX_DIAS));
+    function fecha(dias) { return formato.format(sumarDiasHabiles(hoy, PREPARACION + dias)); }
+    function poner(clase, texto) {
+      document.querySelectorAll(clase).forEach(function (el) { el.textContent = texto; });
+    }
 
-    document.querySelectorAll('.glee-desde').forEach(function (el) { el.textContent = desde; });
-    document.querySelectorAll('.glee-hasta').forEach(function (el) { el.textContent = hasta; });
+    poner('.glee-capital-desde', fecha(CAPITAL[0]));
+    poner('.glee-capital-hasta', fecha(CAPITAL[1]));
+    poner('.glee-depto-desde', fecha(DEPARTAMENTOS[0]));
+    poner('.glee-depto-hasta', fecha(DEPARTAMENTOS[1]));
   })();
 </script>
