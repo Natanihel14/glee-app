@@ -1,0 +1,39 @@
+{% comment %}
+  Aviso de fecha estimada de entrega + política de cancelación.
+  Dónde va: Tienda online → Temas → Personalizar → Productos → Producto predeterminado
+  → Información del producto → Agregar bloque → "Liquid personalizado".
+
+  Para ajustar: cambia MIN_DIAS y MAX_DIAS (días hábiles después de confirmado el pago).
+  No se cuentan los domingos.
+{% endcomment %}
+<div class="glee-entrega" style="padding:12px 14px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin:14px 0;font-size:.95em;line-height:1.45">
+  <p style="margin:0 0 6px">
+    🚚 <strong>Si confirmas tu pago hoy, recíbelo entre el <span class="glee-desde">—</span> y el <span class="glee-hasta">—</span>.</strong>
+  </p>
+  <p style="margin:0;opacity:.75;font-size:.9em">
+    Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
+    <a href="/policies/refund-policy" style="text-decoration:underline">Ver política</a>
+  </p>
+</div>
+<script>
+  (function () {
+    var MIN_DIAS = 2, MAX_DIAS = 4;
+
+    function sumarDiasHabiles(fecha, n) {
+      var d = new Date(fecha);
+      while (n > 0) {
+        d.setDate(d.getDate() + 1);
+        if (d.getDay() !== 0) n--; // 0 = domingo
+      }
+      return d;
+    }
+
+    var formato = new Intl.DateTimeFormat('es-GT', { weekday: 'long', day: 'numeric', month: 'long' });
+    var hoy = new Date();
+    var desde = formato.format(sumarDiasHabiles(hoy, MIN_DIAS));
+    var hasta = formato.format(sumarDiasHabiles(hoy, MAX_DIAS));
+
+    document.querySelectorAll('.glee-desde').forEach(function (el) { el.textContent = desde; });
+    document.querySelectorAll('.glee-hasta').forEach(function (el) { el.textContent = hasta; });
+  })();
+</script>
