@@ -1,19 +1,21 @@
 {% comment %}
-  Aviso de fecha estimada de entrega (Ciudad Capital y Departamentos) + política de cancelación.
+  Aviso de fecha estimada de entrega + política de cancelación.
   Dónde va: Tienda online → Temas → Personalizar → Productos → Producto predeterminado
   → Información del producto → Agregar bloque → "Liquid personalizado".
 
-  Debe coincidir con Configuración → Envío y entrega:
-  - PREPARACION = "Tiempo de preparación de pedidos" (Estimaciones de entrega)
-  - CAPITAL / DEPARTAMENTOS = "Tiempo de tránsito" de cada tarifa
-  No se cuentan sábados ni domingos (igual que Shopify en el checkout).
+  Reglas (hora de Guatemala):
+  - Entrega en 2 a 4 días hábiles (normalmente 2 a 3), igual en todas las zonas.
+  - Pedidos antes de las 5:30 p. m. de lunes a viernes salen el mismo día;
+    después de esa hora, o en fin de semana, salen el siguiente día hábil.
+  - No se cuentan sábados ni domingos.
 {% endcomment %}
 <style>
-  .glee-entrega { border: 1px solid rgba(0,0,0,.12); padding: 14px 16px; margin: 14px 0; line-height: 1.4; }
+  .glee-entrega { border: 1px solid rgba(0,0,0,.12); padding: 14px 16px; margin: 14px 0; line-height: 1.45; }
   .glee-entrega__titulo { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: .78em; letter-spacing: .18em; text-transform: uppercase; }
   .glee-entrega__titulo svg { width: 20px; height: 20px; flex: none; }
-  .glee-entrega__fila { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid rgba(0,0,0,.08); font-size: .92em; }
-  .glee-entrega__fila span:last-child { font-weight: 600; text-align: right; }
+  .glee-entrega__fecha { margin: 0; padding-top: 10px; border-top: 1px solid rgba(0,0,0,.08); font-size: .95em; }
+  .glee-entrega__fecha strong { font-weight: 600; }
+  .glee-entrega__normal { margin: 4px 0 0; font-size: .88em; }
   .glee-entrega__nota { margin: 10px 0 0; font-size: .82em; opacity: .7; }
   .glee-entrega__nota a { text-decoration: underline; }
 </style>
@@ -22,47 +24,47 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M2 6.5h11v9H2zM13 9.5h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/>
     </svg>
-    Entrega estimada si pagas hoy
+    Entrega estimada
   </p>
-  <div class="glee-entrega__fila"><span>Ciudad Capital</span><span class="glee-capital">—</span></div>
-  <div class="glee-entrega__fila"><span>Departamentos</span><span class="glee-depto">—</span></div>
+  <p class="glee-entrega__fecha">Recíbelo entre el <strong class="glee-desde">—</strong> y el <strong class="glee-hasta">—</strong></p>
+  <p class="glee-entrega__normal">Normalmente llega en 2 a 3 días hábiles.</p>
   <p class="glee-entrega__nota">
+    Pedidos hechos y pagados antes de las 5:30 p. m. salen el mismo día. No contamos sábados ni domingos.
     Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
     <a href="/policies/refund-policy">Ver política</a>
   </p>
 </div>
 <script>
   (function () {
-    var PREPARACION = 0;          // días hábiles para preparar el pedido (0 = mismo día)
-    var CAPITAL = [1, 3];         // días hábiles de tránsito en Ciudad Capital
-    var DEPARTAMENTOS = [3, 5];   // días hábiles de tránsito a departamentos
+    var DIAS_ENTREGA = [2, 4];     // días hábiles (mínimo, máximo)
+    var HORA_LIMITE = 17 * 60 + 30; // 5:30 p. m., en minutos
 
     var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
     var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-    function sumarDiasHabiles(fecha, n) {
-      var d = new Date(fecha);
-      while (n > 0) {
-        d.setDate(d.getDate() + 1);
-        if (d.getDay() !== 0 && d.getDay() !== 6) n--; // 0 = domingo, 6 = sábado
-      }
+    // Hora de Guatemala (UTC-6, sin horario de verano) sin importar dónde esté el cliente.
+    // Se trabaja con los métodos getUTC* sobre la fecha ya desplazada.
+    var ahora = new Date(Date.now() - 6 * 60 * 60 * 1000);
+
+    function esHabil(d) { return d.getUTCDay() !== 0 && d.getUTCDay() !== 6; }
+    function siguienteDia(d) { var x = new Date(d); x.setUTCDate(x.getUTCDate() + 1); return x; }
+    function sumarDiasHabiles(d, n) {
+      while (n > 0) { d = siguienteDia(d); if (esHabil(d)) n--; }
       return d;
     }
 
-    // "lun 2 – mié 4 nov" o "vie 30 oct – mar 3 nov"
-    function rango(dias) {
-      var hoy = new Date();
-      var a = sumarDiasHabiles(hoy, PREPARACION + dias[0]);
-      var b = sumarDiasHabiles(hoy, PREPARACION + dias[1]);
-      var desde = DIAS[a.getDay()] + ' ' + a.getDate() + (a.getMonth() !== b.getMonth() ? ' ' + MESES[a.getMonth()] : '');
-      return desde + ' – ' + DIAS[b.getDay()] + ' ' + b.getDate() + ' ' + MESES[b.getMonth()];
+    // Día en que sale el pedido: hoy si es día hábil y antes de la hora límite; si no, el siguiente día hábil.
+    var salida = ahora;
+    var minutos = ahora.getUTCHours() * 60 + ahora.getUTCMinutes();
+    if (!esHabil(salida) || minutos >= HORA_LIMITE) {
+      do { salida = siguienteDia(salida); } while (!esHabil(salida));
     }
 
-    function poner(clase, texto) {
-      document.querySelectorAll(clase).forEach(function (el) { el.textContent = texto; });
-    }
+    function texto(d) { return DIAS[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MESES[d.getUTCMonth()]; }
 
-    poner('.glee-capital', rango(CAPITAL));
-    poner('.glee-depto', rango(DEPARTAMENTOS));
+    var desde = texto(sumarDiasHabiles(salida, DIAS_ENTREGA[0]));
+    var hasta = texto(sumarDiasHabiles(salida, DIAS_ENTREGA[1]));
+    document.querySelectorAll('.glee-desde').forEach(function (el) { el.textContent = desde; });
+    document.querySelectorAll('.glee-hasta').forEach(function (el) { el.textContent = hasta; });
   })();
 </script>
