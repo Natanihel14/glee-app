@@ -4,7 +4,7 @@ Textos para pegar en Shopify. Lo que está entre corchetes `[...]` hay que compl
 
 ## 1. Envío y entrega (ya configurado)
 
-- Estimaciones de entrega: **Manual**, tiempo de preparación **1 día hábil**
+- Estimaciones de entrega: **Manual**, tiempo de preparación **mismo día**
 - Ciudad Capital: "Envío dentro de Ciudad Capital", Q30, tránsito **1 a 3 días hábiles**
 - Departamentos: "Envío a interior del país", Q35, tránsito **3 a 5 días hábiles**
 
@@ -19,7 +19,7 @@ Cuenta: [tipo y número de cuenta]
 A nombre de: [nombre]
 
 Luego envía tu comprobante y tu número de pedido a nuestro WhatsApp [5XXX-XXXX].
-Preparamos tu pedido 1 día hábil después de confirmado tu pago y luego tarda en llegar:
+Enviamos tu pedido el mismo día en que confirmamos tu pago y tarda en llegar:
 Ciudad Capital: 1 a 3 días hábiles · Departamentos: 3 a 5 días hábiles.
 ```
 
@@ -29,7 +29,7 @@ Ciudad Capital: 1 a 3 días hábiles · Departamentos: 3 a 5 días hábiles.
 
 ```
 TIEMPO DE ENTREGA
-Preparamos tu pedido 1 día hábil después de confirmado tu pago. Luego el envío tarda:
+Enviamos tu pedido el mismo día en que confirmamos tu pago. El envío tarda:
 - Ciudad Capital: 1 a 3 días hábiles
 - Departamentos: 3 a 5 días hábiles
 
@@ -48,8 +48,8 @@ WhatsApp [5XXX-XXXX] y lo resolvemos.
 *Configuración → Políticas → Política de envío*
 
 ```
-Enviamos a toda Guatemala. Preparamos tu pedido 1 día hábil después de confirmado tu pago.
-Luego el envío tarda:
+Enviamos a toda Guatemala. Despachamos tu pedido el mismo día en que confirmamos tu pago.
+El envío tarda:
 - Ciudad Capital: 1 a 3 días hábiles (Q30)
 - Departamentos: 3 a 5 días hábiles (Q35)
 No contamos fines de semana ni feriados. Cuando tu pedido salga, te avisaremos por WhatsApp.
