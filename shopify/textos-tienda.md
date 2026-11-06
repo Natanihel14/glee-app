@@ -5,9 +5,10 @@ Textos para pegar en Shopify. Lo que está entre corchetes `[...]` hay que compl
 ## 1. Envío y entrega (ya configurado)
 
 - Estimaciones de entrega: **Manual**, tiempo de preparación **mismo día**
-- Ciudad Capital: "Envío dentro de Ciudad Capital", Q30, tránsito **2 a 4 días hábiles**
-- Departamentos: "Envío a interior del país", Q35, tránsito **2 a 4 días hábiles**
+- Ciudad Capital: "Envío dentro de Ciudad Capital", Q30, tránsito **1 a 3 días hábiles**
+- Departamentos: "Envío a interior del país", Q35, tránsito **1 a 3 días hábiles**
 - Hora límite: pedidos antes de las 5:00 p. m. (lunes a viernes) salen el mismo día
+- Se entrega de lunes a sábado. Normalmente llega 1 a 2 días después de salir; a más tardar 3
 
 ## 2. Instrucciones de pago (transferencia)
 
@@ -20,8 +21,8 @@ Cuenta: [tipo y número de cuenta]
 A nombre de: [nombre]
 
 Luego envía tu comprobante y tu número de pedido a nuestro WhatsApp [5XXX-XXXX].
-Enviamos tu pedido el mismo día si lo haces y pagas antes de las 5:00 p. m. (lunes a viernes).
-Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
+Si haces y pagas tu pedido antes de las 5:00 p. m. (lunes a viernes), sale el mismo día.
+Normalmente llega 1 a 2 días después de salir, a más tardar en 3. Entregamos de lunes a sábado.
 ```
 
 ## 3. Política de reembolso
@@ -30,10 +31,10 @@ Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
 
 ```
 TIEMPO DE ENTREGA
-Tu pedido llega en 2 a 4 días hábiles a todo el país. Normalmente llega en 2 a 3 días hábiles.
 Los pedidos hechos y pagados antes de las 5:00 p. m. (lunes a viernes) salen el mismo día;
 después de esa hora, o en fin de semana, salen el siguiente día hábil.
-No contamos sábados, domingos ni feriados.
+Normalmente llegan 1 a 2 días después de salir, a más tardar en 3.
+Entregamos de lunes a sábado (no en domingos ni feriados).
 
 CANCELACIONES
 Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
@@ -53,9 +54,9 @@ WhatsApp [5XXX-XXXX] y lo resolvemos.
 Enviamos a toda Guatemala:
 - Ciudad Capital: Q30
 - Departamentos: Q35
-Tu pedido llega en 2 a 4 días hábiles; normalmente en 2 a 3 días hábiles.
 Los pedidos hechos y pagados antes de las 5:00 p. m. (lunes a viernes) salen el mismo día.
-No contamos sábados, domingos ni feriados. Cuando tu pedido salga, te avisaremos por WhatsApp.
+Normalmente llegan 1 a 2 días después de salir, a más tardar en 3.
+Entregamos de lunes a sábado (no en domingos ni feriados). Cuando tu pedido salga, te avisaremos por WhatsApp.
 ```
 
 ## 5. Aviso en la página del producto

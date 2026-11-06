@@ -1,13 +1,13 @@
 {% comment %}
   Aviso de fecha estimada de entrega + política de cancelación.
-  Dónde va: Tienda online → Temas → Personalizar → Productos → Producto predeterminado
+  Dónde va: Tienda online → Temas → Personalizar → Productos → Producto predeterminado (y "modal")
   → Información del producto → Agregar bloque → "Liquid personalizado".
 
   Reglas (hora de Guatemala):
-  - Entrega en 2 a 4 días hábiles (normalmente 2 a 3), igual en todas las zonas.
   - Pedidos antes de las 5:00 p. m. de lunes a viernes salen el mismo día;
-    después de esa hora, o en fin de semana, salen el siguiente día hábil.
-  - No se cuentan sábados ni domingos.
+    después de esa hora, o en fin de semana, salen el siguiente día de lunes a viernes.
+  - Se entrega de lunes a sábado (el domingo no cuenta).
+  - Normalmente llega 1 a 2 días después de salir; a más tardar 3 días después.
 {% endcomment %}
 <style>
   .glee-entrega { border: 1px solid rgba(0,0,0,.12); padding: 14px 16px; margin: 14px 0; line-height: 1.45; }
@@ -27,16 +27,17 @@
     Entrega estimada
   </p>
   <p class="glee-entrega__fecha">Recíbelo entre el <strong class="glee-desde">—</strong> y el <strong class="glee-hasta">—</strong></p>
-  <p class="glee-entrega__normal">Normalmente llega en 2 a 3 días hábiles.</p>
+  <p class="glee-entrega__normal">A más tardar el <span class="glee-maximo">—</span>.</p>
   <p class="glee-entrega__nota">
-    Pedidos hechos y pagados antes de las 5:00 p. m. salen el mismo día. No contamos sábados ni domingos.
+    Pedidos hechos y pagados antes de las 5:00 p. m. (lunes a viernes) salen el mismo día. Entregamos de lunes a sábado.
     Una vez confirmado el pago y enviado tu pedido, no es posible cancelarlo mientras va en camino.
     <a href="/policies/refund-policy">Ver política</a>
   </p>
 </div>
 <script>
   (function () {
-    var DIAS_ENTREGA = [2, 4];     // días hábiles (mínimo, máximo)
+    var DIAS_ENTREGA = [1, 2];      // días de entrega normales después de que sale el pedido
+    var DIAS_MAXIMO = 3;            // a más tardar
     var HORA_LIMITE = 17 * 60;      // 5:00 p. m., en minutos
 
     var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
@@ -46,25 +47,30 @@
     // Se trabaja con los métodos getUTC* sobre la fecha ya desplazada.
     var ahora = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
-    function esHabil(d) { return d.getUTCDay() !== 0 && d.getUTCDay() !== 6; }
     function siguienteDia(d) { var x = new Date(d); x.setUTCDate(x.getUTCDate() + 1); return x; }
-    function sumarDiasHabiles(d, n) {
-      while (n > 0) { d = siguienteDia(d); if (esHabil(d)) n--; }
+    function saleEseDia(d) { return d.getUTCDay() >= 1 && d.getUTCDay() <= 5; } // lunes a viernes
+    function entregaEseDia(d) { return d.getUTCDay() !== 0; }                    // lunes a sábado
+
+    // Día en que sale el pedido: hoy si es lunes a viernes antes de la hora límite; si no, el siguiente día de salida.
+    var salida = ahora;
+    var minutos = ahora.getUTCHours() * 60 + ahora.getUTCMinutes();
+    if (!saleEseDia(salida) || minutos >= HORA_LIMITE) {
+      do { salida = siguienteDia(salida); } while (!saleEseDia(salida));
+    }
+
+    function diasDeEntrega(n) {
+      var d = salida;
+      while (n > 0) { d = siguienteDia(d); if (entregaEseDia(d)) n--; }
       return d;
     }
 
-    // Día en que sale el pedido: hoy si es día hábil y antes de la hora límite; si no, el siguiente día hábil.
-    var salida = ahora;
-    var minutos = ahora.getUTCHours() * 60 + ahora.getUTCMinutes();
-    if (!esHabil(salida) || minutos >= HORA_LIMITE) {
-      do { salida = siguienteDia(salida); } while (!esHabil(salida));
+    function texto(d) { return DIAS[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MESES[d.getUTCMonth()]; }
+    function poner(clase, valor) {
+      document.querySelectorAll(clase).forEach(function (el) { el.textContent = valor; });
     }
 
-    function texto(d) { return DIAS[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MESES[d.getUTCMonth()]; }
-
-    var desde = texto(sumarDiasHabiles(salida, DIAS_ENTREGA[0]));
-    var hasta = texto(sumarDiasHabiles(salida, DIAS_ENTREGA[1]));
-    document.querySelectorAll('.glee-desde').forEach(function (el) { el.textContent = desde; });
-    document.querySelectorAll('.glee-hasta').forEach(function (el) { el.textContent = hasta; });
+    poner('.glee-desde', texto(diasDeEntrega(DIAS_ENTREGA[0])));
+    poner('.glee-hasta', texto(diasDeEntrega(DIAS_ENTREGA[1])));
+    poner('.glee-maximo', texto(diasDeEntrega(DIAS_MAXIMO)));
   })();
 </script>
