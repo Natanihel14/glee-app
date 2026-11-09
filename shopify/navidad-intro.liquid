@@ -123,18 +123,26 @@
   @keyframes gnvSway { from { transform: translateX(calc(var(--sx, 10px) * -1)); } to { transform: translateX(var(--sx, 10px)); } }
   .gnv-tw svg { filter: drop-shadow(0 0 3px rgba(255,255,255,.8)); }
 
-  /* portada: tono invernal y nieve acumulada abajo */
-  .gnv-frost { position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(220,230,246,.26) 0%, rgba(220,230,246,0) 34%),
-                radial-gradient(ellipse at 50% 40%, rgba(214,226,245,0) 55%, rgba(205,218,240,.22) 100%); }
-  .gnv-drift { position: absolute; left: -2%; right: -2%; bottom: -1px; height: clamp(18px, 4.5vw, 46px); filter: drop-shadow(0 -2px 5px rgba(90,60,80,.2)); }
-  .gnv-drift svg { display: block; width: 100%; height: 100%; }
+  /* portada: brillo invernal muy suave arriba (sin tapar la foto) */
+  .gnv-frost { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(235,240,250,.14) 0%, rgba(235,240,250,0) 28%); }
   .gnv-deco .gnv-sleigh { z-index: 2; }
-  /* ramas de pino en las esquinas */
-  .gnv-pine { position: absolute; bottom: 0; width: clamp(150px, 25vw, 360px); filter: drop-shadow(0 4px 8px rgba(50,35,40,.18)); }
-  .gnv-pine svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .gnv-pine.l { left: 0; }
-  .gnv-pine.r { right: 0; transform: scaleX(-1); }
+  /* guirnaldas de pino colgando de las esquinas de arriba */
+  .gnv-garl { position: absolute; top: 0; z-index: 3; width: clamp(96px, 17vw, 250px);
+    filter: drop-shadow(0 6px 8px rgba(50,30,35,.22)); opacity: 0;
+    animation: gnvGarlIn 1.2s cubic-bezier(.2,.8,.2,1) .3s forwards; }
+  .gnv-garl.l { left: 0; }
+  .gnv-garl.r { right: 0; }
+  .gnv-garl > svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gnv-garl.r > svg, .gnv-garl.r .gnv-orns { transform: scaleX(-1); }
+  .gnv-sway { transform-box: view-box; transform-origin: 0 0; animation: gnvBreeze 6s ease-in-out infinite alternate; }
+  .gnv-orns { position: absolute; inset: 0; }
+  .gnv-orn { position: absolute; width: 15%; transform-origin: 50% 0; animation: gnvOrn var(--d, 3s) ease-in-out var(--dl, 0s) infinite alternate; }
+  .gnv-orn svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gnv-bulb { animation: gnvGlow var(--d, 2.4s) ease-in-out var(--dl, 0s) infinite; }
+  @keyframes gnvGarlIn { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: none; } }
+  @keyframes gnvBreeze { from { transform: rotate(-1.2deg); } to { transform: rotate(1.4deg); } }
+  @keyframes gnvOrn { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+  @keyframes gnvGlow { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
   .gnv-star { transform-box: fill-box; transform-origin: center; animation: gnvStar 2.8s ease-in-out infinite; }
   @keyframes gnvStar { 0%, 100% { transform: scale(1); filter: none; } 50% { transform: scale(1.18); filter: drop-shadow(0 0 3px rgba(255,214,120,.95)); } }
   .gnv-deco .gnv-spark svg { filter: drop-shadow(0 0 3px rgba(217,173,79,.9)); }
@@ -145,6 +153,7 @@
     .gnv-l { animation: gnvFade .4s ease forwards !important; transform: none; }
     .gnv-deco *, .gnv-amb * { animation: none !important; }
     .gnv-fall, .gnv-tw { display: none; }
+    .gnv-garl { opacity: 1 !important; }
   }
 </style>
 
@@ -338,7 +347,7 @@
   }
 
   T.tagline = 'Feliz Navidad';
-  T.duracion = 4300; // un poquito más larga para que se vea el trineo completo
+  T.duracion = 3300; // corta, para no hacer esperar al cliente
   // al agregar al carrito: copos que suben suavecito del botón
   T.parts = [{ svg: FLAKE('#9fb4cf'), cls: 'spin ice' }, { svg: FLAKE('#c9a85c'), cls: 'spin ice', scale: .8 }, { svg: FLAKE('#b8c8dc'), cls: 'spin ice', scale: .65 }];
   T.cartOpts = { spread: 110, up: 140, fall: 110, min: 13, max: 21, dur: [1500, 2100], n: mobile ? 9 : 12 };
@@ -405,7 +414,7 @@
         var path = svg.lastChild;
 
         // copos que caen justo sobre la letra; la capa crece mientras van cayendo
-        var startAt = 1350 + i * 130, grow = 1500, nfl = mobile ? 7 : 10;
+        var startAt = 950 + i * 110, grow = 1200, nfl = mobile ? 7 : 10;
         var lx = lr.left + l.offsetLeft, ly = lr.top + l.offsetTop;
         for (var k = 0; k < nfl; k++) (function (k) {
           var s = pick(segs), px = rnd(s[0] + 2, s[1] - 2), tx = lx + px, ty = ly + top[Math.round(px)] - 1;
@@ -447,8 +456,8 @@
     var W = innerWidth, H = innerHeight, mr = moon.getBoundingClientRect(), sw = sl.offsetWidth;
     setTimeout(function () {
       fly(el, sl, [-sw * .8, H * (mobile ? .34 : .12)], [mr.left + mr.width / 2, mr.top + mr.height / 2], [W + sw * .8, -H * (mobile ? .04 : .1)],
-        mobile ? 3000 : 3200, { stop: isClosed, every: 26, spark: [6, mobile ? 12 : 15], color: '#fff1c8' });
-    }, 550);
+        mobile ? 2400 : 2600, { stop: isClosed, every: 26, spark: [6, mobile ? 12 : 15], color: '#fff1c8' });
+    }, 350);
   };
 
   /* ---------- Ramas de pino (se dibujan aguja por aguja, cada carga es un poquito distinta) ---------- */
@@ -478,29 +487,55 @@
     }
   }
   var bid = 0;
-  function pineCorner(side) {
+  function ornament(color, len, id) {
+    var c = color === 'oro' ? ['#fbe7a6', '#d6a443', '#94661f'] : ['#d65466', '#9c1f33', '#560d1b'];
+    return '<svg viewBox="0 0 40 ' + (len + 38) + '"><defs><radialGradient id="' + id + '" cx="38%" cy="34%" r="70%">' +
+      '<stop offset="0" stop-color="' + c[0] + '"/><stop offset=".55" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + c[2] + '"/></radialGradient></defs>' +
+      '<path d="M20 0V' + len + '" stroke="#c9a85c" stroke-width="1.2"/>' +
+      '<rect x="15" y="' + len + '" width="10" height="6" rx="1.5" fill="#d9ad4f"/>' +
+      '<circle cx="20" cy="' + (len + 20) + '" r="14" fill="url(#' + id + ')"/>' +
+      '<ellipse cx="15" cy="' + (len + 14) + '" rx="4" ry="2.6" fill="rgba(255,255,255,.75)" transform="rotate(-30 15 ' + (len + 14) + ')"/></svg>';
+  }
+  function pineTop(side) {
     var out = { stem: [], n: ['', '', ''], frost: '' }, id = 'gnvbe' + (bid++);
-    [[-20, 410, -1.05, 330, 30, 1.2], [-30, 360, -.55, 300, -20, 1.1], [10, 440, -1.45, 240, 25, 1], [-30, 300, -.2, 220, -15, .95]]
-      .forEach(function (b) { pineBranch(b[0], b[1], b[2] + rnd(-.06, .06), b[3] * rnd(.92, 1.05), b[4], b[5], out, 0); });
-    var s = '<svg viewBox="-10 70 330 340"><defs><radialGradient id="' + id + '" cx="40%" cy="38%"><stop offset="0" stop-color="#c93a4a"/><stop offset="1" stop-color="#6e1020"/></radialGradient></defs>';
+    // ramas que salen de la esquina de arriba y caen hacia adentro
+    var ramas = [[-24, -14, .42, 290, 16, 1.15], [-30, 30, .95, 210, -12, 1], [4, -26, .12, 250, 10, 1.05], [-26, 90, 1.32, 150, 8, .85]];
+    ramas.forEach(function (b) { pineBranch(b[0], b[1], b[2] + rnd(-.04, .04), b[3] * rnd(.95, 1.04), b[4], b[5], out, 0); });
+    var s = '<svg viewBox="0 0 300 250"><defs><radialGradient id="' + id + '" cx="40%" cy="38%"><stop offset="0" stop-color="#c93a4a"/><stop offset="1" stop-color="#6e1020"/></radialGradient></defs><g class="gnv-sway">';
     out.stem.forEach(function (st) { s += '<path d="' + st[0] + '" fill="none" stroke="#4a3a30" stroke-width="' + st[1] + '" stroke-linecap="round"/>'; });
     ['#2c4638', '#3b5a49', '#557763'].forEach(function (c, k) { s += '<path d="' + out.n[k] + '" fill="none" stroke="' + c + '" stroke-width="1.3" stroke-linecap="round"/>'; });
     s += '<path d="' + out.frost + '" fill="none" stroke="#f4f7fa" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>';
     // bayas rojas
-    [[150, 270, 1.2], [95, 180, 1]].forEach(function (g) {
+    [[96, 52, 1], [42, 104, .85]].forEach(function (g) {
       [[0, 0], [9, -4], [4, 8], [-7, 5]].forEach(function (b) {
-        var r = 6.5 * g[2] * rnd(.85, 1.1), x = g[0] + b[0] * g[2], y = g[1] + b[1] * g[2];
+        var r = 6 * g[2] * rnd(.85, 1.1), x = g[0] + b[0] * g[2], y = g[1] + b[1] * g[2];
         s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" fill="url(#' + id + ')"/><circle cx="' + (x - r * .35).toFixed(1) + '" cy="' + (y - r * .35).toFixed(1) + '" r="' + (r * .28).toFixed(1) + '" fill="rgba(255,255,255,.6)"/>';
       });
     });
-    return '<div class="gnv-pine ' + side + '">' + s + '</svg></div>';
+    // lucecitas cálidas que titilan a lo largo de las ramas
+    [ramas[0], ramas[2], ramas[1]].forEach(function (b, k) {
+      for (var d = 45; d < b[3] * .9; d += 48) {
+        var nx = -Math.sin(b[2]), ny = Math.cos(b[2]), off = (d / 48 % 2 ? 1 : -1) * 7;
+        var x = b[0] + Math.cos(b[2]) * d + nx * off, y = b[1] + Math.sin(b[2]) * d + ny * off;
+        if (x < 4 || y < 4) continue;
+        s += '<g class="gnv-bulb" style="--d:' + rnd(1.8, 3).toFixed(1) + 's;--dl:-' + rnd(0, 3).toFixed(1) + 's">' +
+          '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="7" fill="#ffcf70" opacity=".35"/>' +
+          '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="2.8" fill="#fff3cf"/></g>';
+      }
+    });
+    s += '</g></svg>';
+    // esferas colgando que se mecen
+    var orns = '';
+    [[30, 18, 30, 'vino'], [5.5, 50, 22, 'oro'], [60, 0, 58, 'oro']].forEach(function (o, k) {
+      orns += '<div class="gnv-orn" style="left:' + o[0] + '%;top:' + o[1] + '%;--d:' + rnd(2.6, 3.6).toFixed(1) + 's;--dl:-' + rnd(0, 3).toFixed(1) + 's">' +
+        ornament(o[3], o[2], id + 'o' + k) + '</div>';
+    });
+    return '<div class="gnv-garl ' + side + '">' + s + '<div class="gnv-orns">' + orns + '</div></div>';
   }
 
-  /* ---------- Portada: tono invernal + nieve + ramas de pino + el trineo cruzando ---------- */
+  /* ---------- Portada: brillo suave + nieve + guirnaldas de pino arriba + el trineo cruzando ---------- */
   T.hero = function () {
-    return '<div class="gnv-frost"></div>' + snow(mobile ? 36 : 64, true, 1.25) +
-      pineCorner('l') + pineCorner('r') +
-      '<div class="gnv-drift"><svg viewBox="0 0 1000 60" preserveAspectRatio="none"><path d="M0 60V32Q50 14 110 28T230 24T350 30T470 20T590 28T710 22T830 30T950 20T1000 26V60Z" fill="#fff"/></svg></div>';
+    return '<div class="gnv-frost"></div>' + snow(mobile ? 26 : 54, true, 1.2) + pineTop('l') + pineTop('r');
   };
   T.afterHero = function (o) {
     var sl = sleighEl(mobile ? 140 : 230, '#7a5a57');
@@ -641,8 +676,8 @@
       }
       setTimeout(close, reduce ? 2000 : (T.duracion || DURACION_MS));
     }
-    // espera a que cargue la letra (máximo 1.5 s) para que el logo no brinque
-    setTimeout(start, 1500);
+    // espera a que cargue la letra (máximo 0.9 s) para que el logo no brinque
+    setTimeout(start, 900);
     var link = document.getElementById(P + '-font');
     function fontsReady() {
       if (!document.fonts || !document.fonts.load) return start();
