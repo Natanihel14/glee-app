@@ -1,0 +1,330 @@
+<!-- ===== GLEE · Navidad (versión Lazo: envoltura de regalo) ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="gnl-font" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400&display=swap" rel="stylesheet">
+
+<style>
+  html.gnl-lock, html.gnl-lock body { overflow: hidden !important; }
+  html.gnl-lock body > *:not(#gnl-intro) { visibility: hidden !important; }
+
+  /* ===== Intro: la tienda envuelta como regalo, que se abre ===== */
+  #gnl-intro { --rw: clamp(26px, 5vw, 46px); position: fixed; inset: 0; z-index: 2147483647; overflow: hidden; cursor: pointer; }
+  .gnl-half {
+    position: absolute; top: 0; bottom: 0; width: 50.2%; will-change: transform;
+    background: radial-gradient(rgba(190,150,85,.4) 1px, rgba(190,150,85,0) 1.7px) 0 0 / 26px 26px, linear-gradient(180deg, #f6ece5, #ecdbd1);
+    transition: transform .9s cubic-bezier(.7,0,.2,1);
+  }
+  .gnl-half.l { left: 0; }
+  .gnl-half.r { right: 0; }
+  /* listón vertical (mitad en cada lado, para que se parta al abrir) */
+  .gnl-rv { position: absolute; top: 0; bottom: 0; width: calc(var(--rw) / 2); box-shadow: 0 0 9px rgba(80,30,40,.28);
+    transform: scaleY(0); transform-origin: 50% 0; animation: gnlDrawY .7s cubic-bezier(.6,0,.2,1) .1s forwards; }
+  .gnl-half.l .gnl-rv { right: 0; background: linear-gradient(90deg, rgba(217,184,118,0) 0 14%, #d9b876 14% 22%, rgba(217,184,118,0) 22%), linear-gradient(90deg, #6e1626, #b23a4e); }
+  .gnl-half.r .gnl-rv { left: 0; background: linear-gradient(270deg, rgba(217,184,118,0) 0 14%, #d9b876 14% 22%, rgba(217,184,118,0) 22%), linear-gradient(270deg, #6e1626, #b23a4e); }
+  /* listón horizontal */
+  .gnl-rh { position: absolute; left: 0; right: 0; top: 68%; height: var(--rw); margin-top: calc(var(--rw) / -2); box-shadow: 0 0 9px rgba(80,30,40,.28);
+    background: linear-gradient(180deg, rgba(217,184,118,0) 0 7%, #d9b876 7% 11%, rgba(217,184,118,0) 11% 89%, #d9b876 89% 93%, rgba(217,184,118,0) 93%),
+                linear-gradient(180deg, #6e1626, #b23a4e 50%, #6e1626);
+    transform: scaleX(0); transform-origin: 0 50%; }
+  .gnl-half.l .gnl-rh { animation: gnlDrawX .4s ease-in .15s forwards; }
+  .gnl-half.r .gnl-rh { animation: gnlDrawX .4s ease-out .55s forwards; }
+  .gnl-c { position: absolute; inset: 0; pointer-events: none; transition: opacity .4s ease, transform .7s ease; }
+  .gnl-bow { position: absolute; left: 50%; top: 68%; width: calc(var(--rw) * 5); transform: translate(-50%, -50%) scale(0);
+    filter: drop-shadow(0 5px 7px rgba(70,20,30,.3)); animation: gnlPop .65s cubic-bezier(.3,1.5,.5,1) .8s forwards; }
+  .gnl-bow svg { display: block; width: 100%; height: auto; overflow: visible; }
+  /* etiqueta con el logo */
+  .gnl-label { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -42%); opacity: 0; text-align: center; white-space: nowrap;
+    padding: clamp(18px, 4vw, 34px) clamp(30px, 7vw, 70px) clamp(16px, 3.4vw, 28px); background: #fffaf5; border-radius: 4px;
+    outline: 1px solid #d9b876; outline-offset: -7px; box-shadow: 0 12px 34px rgba(90,50,50,.2);
+    animation: gnlUp .7s cubic-bezier(.2,.8,.2,1) .45s forwards; }
+  .gnl-logo { font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-weight: 900; letter-spacing: -.02em; line-height: 1.12;
+    font-size: clamp(64px, 17vw, 150px); padding-bottom: .12em; color: transparent; -webkit-background-clip: text; background-clip: text;
+    background-image: linear-gradient(105deg, rgba(255,255,255,0) 42%, rgba(255,255,255,.95) 50%, rgba(255,255,255,0) 58%),
+                      linear-gradient(180deg, #e2c27c 0%, #c79a4b 45%, #94692a 100%);
+    background-size: 300% 100%, 100% 100%; background-position: 100% 0, 0 0; background-repeat: no-repeat;
+    animation: gnlShine 1.1s ease-in-out 1.15s forwards; }
+  .gnl-tagline { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 400; text-transform: uppercase;
+    font-size: clamp(10px, 2.5vw, 15px); letter-spacing: .36em; padding-left: .36em; color: #8c2236; }
+  #gnl-intro:not(.ready) * { animation-play-state: paused !important; }
+  #gnl-intro.is-out .gnl-half.l { transform: translateX(-101%); }
+  #gnl-intro.is-out .gnl-half.r { transform: translateX(101%); }
+  #gnl-intro.is-out .gnl-c { opacity: 0; transform: scale(1.06); }
+
+  /* ===== Aviso de arriba: hasta cuándo pedir para recibir antes de Navidad ===== */
+  .gnl-bar { position: relative; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 9px 42px 9px 14px;
+    background: #7d1d2f; color: #fbeee6; font-size: 13px; line-height: 1.35; letter-spacing: .03em; text-align: center; }
+  .gnl-bar svg { flex: none; width: 17px; height: 17px; }
+  .gnl-bar strong { font-weight: 600; color: #f3d9a4; }
+  .gnl-bar button { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; padding: 0; border: 0;
+    background: none; color: inherit; font-size: 20px; line-height: 1; cursor: pointer; opacity: .8; }
+  .gnl-bar button:hover, .gnl-bar button:focus-visible { opacity: 1; }
+
+  /* ===== Portada y páginas: destellos dorados, sin tapar las fotos ===== */
+  .gnl-deco { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+  .gnl-deco.gnl-page { inset: 0 0 auto 0; height: 100vh; z-index: 50; }
+  .gnl-g { position: absolute; width: var(--s); opacity: 0; animation: gnlTw var(--d) ease-in-out var(--dl) infinite; }
+  .gnl-g svg, .gnl-p svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gnl-dust { position: absolute; bottom: -3%; width: var(--s); aspect-ratio: 1; border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle, #fff3cf 0 25%, #d9ad4f 45%, rgba(163,127,47,.35) 62%, rgba(163,127,47,0) 78%);
+    animation: gnlRise var(--d) linear var(--dl) infinite; }
+  /* etiqueta de regalo colgando */
+  .gnl-tag { position: absolute; top: 0; right: clamp(14px, 7vw, 110px); width: clamp(54px, 7.5vw, 94px); opacity: 0;
+    animation: gnlDrop 1.1s cubic-bezier(.2,.8,.2,1) .5s forwards; }
+  .gnl-tag div { transform-origin: 50% 0; will-change: transform; animation: gnlSwing 4.2s ease-in-out infinite alternate; }
+  .gnl-tag svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 5px 6px rgba(70,35,40,.22)); }
+  .gnl-off, .gnl-off * { animation-play-state: paused !important; }
+  /* partículas al agregar al carrito */
+  .gnl-p { position: fixed; z-index: 2147483646; pointer-events: none; will-change: transform, opacity; }
+
+  @keyframes gnlDrawY { to { transform: scaleY(1); } }
+  @keyframes gnlDrawX { to { transform: scaleX(1); } }
+  @keyframes gnlPop   { to { transform: translate(-50%, -50%) scale(1); } }
+  @keyframes gnlUp    { 30% { opacity: 1; } to { opacity: 1; transform: translate(-50%, -50%); } }
+  @keyframes gnlShine { to { background-position: 0% 0, 0 0; } }
+  @keyframes gnlTw    { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0deg); } 50% { opacity: var(--o, 1); transform: scale(1) rotate(45deg); } }
+  @keyframes gnlRise  { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: var(--o, .8); } 80% { opacity: var(--o, .8); }
+                        100% { opacity: 0; transform: translate(var(--dx, 0px), calc(var(--h, 600) * -1px)); } }
+  @keyframes gnlDrop  { from { opacity: 0; transform: translateY(-40%); } to { opacity: 1; transform: none; } }
+  @keyframes gnlSwing { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    #gnl-intro * { animation-duration: .01s !important; animation-delay: 0s !important; }
+    .gnl-half, .gnl-c { transition-duration: .3s !important; }
+    .gnl-g, .gnl-dust { display: none; }
+    .gnl-tag { opacity: 1; animation: none; }
+    .gnl-tag div { animation: none; }
+  }
+</style>
+
+<script>
+(function () {
+  // ===== Ajustes =====
+  var FECHA_INICIO = new Date('2026-12-01T00:00:00-06:00'); // a partir de aquí se muestra
+  var FECHA_FIN    = new Date('2026-12-26T00:00:00-06:00'); // a partir de aquí ya no se muestra
+  var UNA_VEZ_POR_SESION = true;   // la intro sale una vez por visita
+  var VOLUMEN = 0.3;               // sonido al agregar al carrito (0 = sin sonido)
+  var MOSTRAR_BARRA = true;        // aviso de arriba: "Pide antes del..."
+  var MOSTRAR_ETIQUETA = true;     // etiqueta de regalo colgando en la portada
+  // Para calcular el último día de pedido (las mismas reglas del aviso de entrega):
+  var LLEGA_A_MAS_TARDAR = 24;     // día de diciembre en que el pedido ya debe haber llegado
+  var DIAS_MAXIMO = 3;             // días de entrega como máximo (lunes a sábado)
+  var HORA_LIMITE = 17;            // los pedidos salen el mismo día antes de esta hora (17 = 5:00 p. m.)
+
+  var P = 'gnl';
+  var ES_INICIO  = {% if template.name == 'index' %}true{% else %}false{% endif %};
+  var ES_PRENDA  = {% if template.name == 'product' or template.name == 'collection' %}true{% else %}false{% endif %};
+  var ES_CARRITO = {% if template.name == 'cart' %}true{% else %}false{% endif %};
+  var PREVIEW = false;
+
+  var hoy = new Date();
+  if (!PREVIEW && (hoy < FECHA_INICIO || hoy >= FECHA_FIN)) return;
+
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.innerWidth < 640;
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function onReady(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+
+  var GLINT = '<svg viewBox="0 0 24 24"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z" fill="#dcb45a" stroke="#a37f2f" stroke-width=".7"/><circle cx="12" cy="12" r="2.6" fill="#fff6dc"/></svg>';
+  var BOW = '<svg viewBox="-62 -42 124 96"><defs><linearGradient id="gnlb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d46275"/><stop offset="1" stop-color="#8f2237"/></linearGradient></defs>' +
+    '<path d="M-5 6C-14 24-26 36-36 48L-21 45-17 34C-9 24-1 15 4 7Z" fill="#7a1a2c"/><path d="M5 6C14 24 26 36 36 48L21 45 17 34C9 24 1 15-4 7Z" fill="#8c2236"/>' +
+    '<path d="M0 0C-18-32-58-36-56-8C-55 16-22 13 0 0Z" fill="url(#gnlb)" stroke="#5c0f1e" stroke-width="1"/><path d="M0 0C18-32 58-36 56-8C55 16 22 13 0 0Z" fill="url(#gnlb)" stroke="#5c0f1e" stroke-width="1"/>' +
+    '<path d="M-6-1C-20-17-42-21-44-8C-45 4-24 4-6-1Z" fill="#6a1425"/><path d="M6-1C20-17 42-21 44-8C45 4 24 4 6-1Z" fill="#6a1425"/>' +
+    '<path d="M-50-14C-46-27-28-27-14-14" fill="none" stroke="#d9b876" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>' +
+    '<path d="M50-14C46-27 28-27 14-14" fill="none" stroke="#d9b876" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>' +
+    '<rect x="-10" y="-10" width="20" height="20" rx="7" fill="#b63e53" stroke="#5c0f1e" stroke-width="1"/><rect x="-9" y="-9" width="18" height="8" rx="6" fill="#dc7385" opacity=".7"/></svg>';
+
+  /* ---------- Fechas (hora de Guatemala) ---------- */
+  var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+  function horaTexto(h) { return (h > 12 ? h - 12 : h) + ':00 ' + (h >= 12 ? 'p. m.' : 'a. m.'); }
+  // último día para pedir y que llegue a tiempo, contando DIAS_MAXIMO días de entrega (no hay entregas en domingo)
+  function ultimoPedido(anio) {
+    var meta = Date.UTC(anio, 11, LLEGA_A_MAS_TARDAR), d = new Date(meta);
+    for (var i = 0; i < 20; i++) {
+      d.setUTCDate(d.getUTCDate() - 1);
+      if (d.getUTCDay() === 0 || d.getUTCDay() === 6) continue; // los pedidos salen de lunes a viernes
+      var e = new Date(d), n = DIAS_MAXIMO;
+      while (n > 0) { e.setUTCDate(e.getUTCDate() + 1); if (e.getUTCDay() !== 0) n--; }
+      if (e.getTime() <= meta) return d;
+    }
+    return d;
+  }
+  function textoBarra() {
+    var gt = new Date(Date.now() - 6 * 3600 * 1000);
+    var hoyGT = Date.UTC(gt.getUTCFullYear(), gt.getUTCMonth(), gt.getUTCDate());
+    var u = ultimoPedido(FECHA_FIN.getFullYear()), faltan = Math.round((u.getTime() - hoyGT) / 86400000);
+    var hora = horaTexto(HORA_LIMITE);
+    if (faltan > 0) return 'Pide antes del <strong>' + DIAS[u.getUTCDay()] + ' ' + u.getUTCDate() + ' de diciembre, ' + hora +
+      '</strong> y recíbelo antes de Navidad. ' + (faltan === 1 ? 'Falta 1 día.' : 'Faltan ' + faltan + ' días.');
+    if (faltan === 0 && gt.getUTCHours() < HORA_LIMITE) return '<strong>Último día:</strong> pide hoy antes de las ' + hora + ' y recíbelo antes de Navidad.';
+    return 'Felices fiestas de parte de todo el equipo de glee.';
+  }
+  function barra() {
+    if (!MOSTRAR_BARRA || document.querySelector('.' + P + '-bar')) return;
+    try { if (sessionStorage.getItem(P + 'Barra') === '0') return; } catch (e) {}
+    var b = document.createElement('div');
+    b.className = P + '-bar';
+    b.setAttribute('role', 'note');
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M3.5 9h17v4h-17zM5 13v7.5h14V13M12 9v11.5M12 9C9.5 9 7 7.6 7.6 5.6 8.3 3.6 11 4.8 12 9ZM12 9c2.500 0 5-1.400 4.400-3.400C15.700 3.600 13 4.800 12 9Z"/></svg>' +
+      '<span>' + textoBarra() + '</span><button type="button" aria-label="Cerrar aviso">&times;</button>';
+    b.querySelector('button').addEventListener('click', function () {
+      b.remove();
+      try { sessionStorage.setItem(P + 'Barra', '0'); } catch (e) {}
+    });
+    document.body.insertBefore(b, document.body.firstChild);
+  }
+
+  /* ---------- Sonido (hecho con código, sin archivos) ---------- */
+  var actx = null;
+  function campanita() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC || VOLUMEN <= 0) return;
+      actx = actx || new AC();
+      if (actx.state === 'suspended') actx.resume();
+      var t = actx.currentTime + 0.02;
+      [[1318.5, 0, 1.1], [1975.5, .11, 1.3]].forEach(function (n) {
+        [[1, 1], [2.76, .35], [5.4, .12]].forEach(function (p) {
+          var o = actx.createOscillator(), g = actx.createGain(), dd = n[2] / Math.sqrt(p[0]);
+          o.type = 'sine'; o.frequency.value = n[0] * p[0];
+          g.gain.setValueAtTime(0.0001, t + n[1]);
+          g.gain.linearRampToValueAtTime(VOLUMEN * .22 * p[1], t + n[1] + 0.005);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + n[1] + dd);
+          o.connect(g); g.connect(actx.destination); o.start(t + n[1]); o.stop(t + n[1] + dd + 0.05);
+        });
+      });
+    } catch (e) {}
+  }
+
+  /* ---------- INTRO ---------- */
+  function intro() {
+    if (ES_CARRITO) return;
+    if (!PREVIEW && window.Shopify && Shopify.designMode) return; // en el editor de temas no sale
+    try {
+      if (UNA_VEZ_POR_SESION && sessionStorage.getItem(P + 'Visto') === '1') return;
+      sessionStorage.setItem(P + 'Visto', '1');
+    } catch (e) {}
+    var el = document.createElement('div');
+    el.id = P + '-intro';
+    el.setAttribute('aria-hidden', 'true');
+    var lado = '<i class="gnl-rv"></i><i class="gnl-rh"></i>';
+    el.innerHTML = '<div class="gnl-half l">' + lado + '</div><div class="gnl-half r">' + lado + '</div>' +
+      '<div class="gnl-c"><div class="gnl-label"><div class="gnl-logo">glee</div><p class="gnl-tagline">Feliz Navidad</p></div>' +
+      '<div class="gnl-bow">' + BOW + '</div></div>';
+    document.body.insertBefore(el, document.body.firstChild);
+    document.documentElement.classList.add(P + '-lock');
+
+    var closed = false, started = false;
+    function close() {
+      if (closed) return;
+      closed = true;
+      el.classList.add('is-out');
+      document.documentElement.classList.remove(P + '-lock');
+      setTimeout(function () { el.remove(); }, 1000);
+    }
+    function start() {
+      if (started) return;
+      started = true;
+      el.classList.add('ready');
+      setTimeout(close, reduce ? 1200 : 2500);
+    }
+    // espera a que cargue la letra (máximo 0.8 s) para que el logo no brinque
+    setTimeout(start, 800);
+    var link = document.getElementById(P + '-font');
+    function fontsReady() {
+      if (!document.fonts || !document.fonts.load) return start();
+      Promise.all([document.fonts.load('900 100px "Playfair Display"', 'glee'), document.fonts.load('400 20px "Playfair Display"', 'FELIZ NAVIDAD')]).then(start, start);
+    }
+    if (!link || link.sheet) fontsReady();
+    else { link.addEventListener('load', fontsReady); link.addEventListener('error', start); }
+    el.addEventListener('click', close); // tocar la pantalla la abre antes
+  }
+
+  /* ---------- PORTADA Y PÁGINAS ---------- */
+  function destellos(n, h) {
+    var s = '';
+    for (var i = 0; i < n; i++) {
+      s += '<i class="gnl-g" style="left:' + rnd(2, 96).toFixed(1) + '%;top:' + rnd(3, 92).toFixed(1) + '%;--s:' + rnd(mobile ? 8 : 10, mobile ? 15 : 20).toFixed(1) +
+        'px;--d:' + rnd(2.6, 4.6).toFixed(1) + 's;--dl:-' + rnd(0, 5).toFixed(1) + 's;--o:' + rnd(.7, 1).toFixed(2) + '">' + GLINT + '</i>';
+    }
+    for (i = 0; i < n; i++) {
+      s += '<i class="gnl-dust" style="left:' + rnd(0, 100).toFixed(1) + '%;--s:' + rnd(3.5, 7).toFixed(1) + 'px;--d:' + rnd(11, 19).toFixed(1) + 's;--dl:-' + rnd(0, 19).toFixed(1) +
+        's;--dx:' + rnd(-50, 50).toFixed(0) + 'px;--o:' + rnd(.55, .9).toFixed(2) + ';--h:' + Math.round(h * rnd(.55, 1.05)) + '"></i>';
+    }
+    return s;
+  }
+  var ETIQUETA = '<div class="gnl-tag"><div><svg viewBox="0 0 100 192">' +
+    '<path d="M50 0V70" stroke="#8c2236" stroke-width="2.2"/>' +
+    '<path d="M50 50 86 80V178a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6V80Z" fill="#fffaf5" stroke="#d9b876" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M50 60 79 84V172a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4V84Z" fill="none" stroke="#d9b876" stroke-width=".8" stroke-linejoin="round" opacity=".7"/>' +
+    '<circle cx="50" cy="76" r="5" fill="#e9d6cc" stroke="#c9a15a" stroke-width="1.4"/>' +
+    '<text x="50" y="118" text-anchor="middle" font-family="\'Playfair Display\', Georgia, serif" font-style="italic" font-size="19" fill="#8c2236">Feliz</text>' +
+    '<text x="50" y="140" text-anchor="middle" font-family="\'Playfair Display\', Georgia, serif" font-style="italic" font-size="19" fill="#8c2236">Navidad</text>' +
+    '<path transform="translate(50 160) scale(.42)" d="M0-12C1-4 4-1 12 0C4 1 1 4 0 12C-1 4-4 1-12 0C-4-1-1-4 0-12Z" fill="#c9a15a"/>' +
+    '</svg></div></div>';
+  function pausaFuera(o) {
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (en) { o.classList.toggle(P + '-off', !en[en.length - 1].isIntersecting); }).observe(o);
+  }
+  function decorInicio() {
+    var hero = document.querySelector('#MainContent > .shopify-section') || document.querySelector('main .shopify-section');
+    if (!hero || hero.querySelector('.' + P + '-deco')) return;
+    if (getComputedStyle(hero).position === 'static') hero.style.position = 'relative';
+    var o = document.createElement('div');
+    o.className = P + '-deco';
+    o.setAttribute('aria-hidden', 'true');
+    o.innerHTML = destellos(mobile ? 9 : 16, hero.clientHeight || 600) + (MOSTRAR_ETIQUETA ? ETIQUETA : '');
+    hero.appendChild(o);
+    pausaFuera(o);
+  }
+  function decorPrenda() {
+    if (document.querySelector('.' + P + '-page')) return;
+    var o = document.createElement('div');
+    o.className = P + '-deco ' + P + '-page';
+    o.setAttribute('aria-hidden', 'true');
+    o.innerHTML = destellos(mobile ? 5 : 9, innerHeight);
+    document.body.appendChild(o);
+    pausaFuera(o);
+  }
+
+  /* ---------- AGREGAR AL CARRITO: destellos dorados + campanita ---------- */
+  function cartFx() {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest(
+        'button[name="add"], form[action*="/cart/add"] button[type="submit"], form[action*="/cart/add"] input[type="submit"]');
+      if (!btn) return;
+      campanita();
+      if (reduce || !btn.animate) return;
+      btn.animate([{ transform: 'scale(1)' }, { transform: 'scale(.96)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 320, easing: 'ease-out' });
+      var r = btn.getBoundingClientRect(), n = mobile ? 10 : 14;
+      for (var i = 0; i < n; i++) {
+        var d = document.createElement('div'), sz = rnd(9, 18);
+        d.className = P + '-p';
+        d.innerHTML = GLINT;
+        d.style.width = sz.toFixed(1) + 'px';
+        d.style.left = (r.left + r.width / 2 + rnd(-r.width * .3, r.width * .3) - sz / 2) + 'px';
+        d.style.top = (r.top + r.height / 2 - sz / 2) + 'px';
+        document.body.appendChild(d);
+        var dx = rnd(-110, 110), dy = -rnd(60, 150), rot = rnd(-160, 160);
+        d.animate([
+          { transform: 'translate(0,0) scale(.2)', opacity: 0 },
+          { transform: 'translate(' + (dx * .6) + 'px,' + dy + 'px) scale(1) rotate(' + (rot * .5) + 'deg)', opacity: 1, offset: .4 },
+          { transform: 'translate(' + dx + 'px,' + (dy + rnd(30, 80)) + 'px) scale(.5) rotate(' + rot + 'deg)', opacity: 0 }
+        ], { duration: rnd(900, 1400), delay: rnd(0, 120), easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' })
+          .onfinish = (function (node) { return function () { node.remove(); }; })(d);
+      }
+    }, true);
+  }
+
+  /* ---------- ARRANQUE ---------- */
+  intro();
+  onReady(function () {
+    barra();
+    if (ES_INICIO) decorInicio();
+    if (ES_PRENDA) decorPrenda();
+    cartFx();
+  });
+})();
+</script>
+<!-- ===== /GLEE · Navidad (versión Lazo) ===== -->
