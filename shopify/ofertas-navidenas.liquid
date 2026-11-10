@@ -13,6 +13,13 @@
 
 {% assign gof_col = collections[gof_coleccion] %}
 {% if gof_col.products.size > 0 %}
+{% assign gof_tope = 0 %}
+{% for product in gof_col.products limit: gof_maximo %}
+  {% if product.available and product.compare_at_price > product.price %}
+    {% assign gof_a = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+    {% if gof_a > gof_tope %}{% assign gof_tope = gof_a %}{% endif %}
+  {% endif %}
+{% endfor %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400&display=swap" rel="stylesheet">
@@ -35,6 +42,31 @@
                       linear-gradient(180deg, #fff6dc 0%, #f2d589 40%, #d6a443 78%, #ad7a25 100%);
     background-size: 300% 100%, 100% 100%; background-position: 100% 0, 0 0; background-repeat: no-repeat; }
   .gof-sub { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: clamp(14px, 2vw, 18px); color: var(--crema); opacity: .85; }
+
+  /* muñeco de nieve con el letrero: saluda, parpadea, sigue con los ojos y reacciona al tocarlo */
+  .gof-man { position: relative; display: block; width: clamp(200px, 30vw, 270px); margin: 0 auto 2px; padding: 0; border: 0; background: none; color: inherit; font: inherit;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .gof-man svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gof-man:focus-visible { outline: 2px solid var(--oro); outline-offset: 6px; border-radius: 8px; }
+  .gof-m-jump, .gof-m-all, .gof-m-arm, .gof-m-lids, .gof-m-hat, .gof-m-tail, .gof-m-sign, .gof-m-board { transform-box: fill-box; }
+  .gof-m-jump { transform-origin: 50% 100%; }
+  .gof-m-all  { transform-origin: 50% 100%; animation: gofBreath 3.2s ease-in-out infinite; }
+  .gof-m-arm  { transform-origin: 100% 100%; animation: gofWave 5s ease-in-out infinite; }
+  .gof-m-eyes { transition: transform .18s ease-out; }
+  .gof-m-lids { transform-origin: 50% 50%; animation: gofBlink 4.6s infinite; }
+  .gof-m-hat  { transform-origin: 20% 100%; transition: transform .35s cubic-bezier(.3,1.6,.5,1); }
+  .gof-m-tail { transform-origin: 0 0; animation: gofFlutter 2.4s ease-in-out infinite alternate; }
+  .gof-m-sign { transform-origin: 50% 100%; animation: gofSway 3.8s ease-in-out infinite alternate; }
+  .gof-m-board { transform-origin: 50% 50%; transition: transform .26s ease-in; }
+  .gof-m-board.gof-flip { transform: scaleX(0); }
+  .gof-man.gof-hi .gof-m-jump { animation: gofJump .75s cubic-bezier(.3,.6,.4,1); }
+  .gof-man.gof-hi .gof-m-hat { transform: translateY(-9px) rotate(-16deg); }
+  .gof-man.gof-hi .gof-m-arm { animation: gofWaveFast .75s ease-in-out; }
+  .gof-hint { position: absolute; left: 0; top: 4%; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 13px; color: var(--oro);
+    transform: rotate(-8deg); transition: opacity .4s ease; animation: gofHint 2.2s ease-in-out infinite; }
+  .gof-man.gof-tocado .gof-hint { opacity: 0; animation: none; }
+  .gof-ball { position: absolute; left: 0; top: 0; z-index: 3; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, #fff 0 45%, rgba(255,255,255,.7) 60%, rgba(255,255,255,0) 76%); }
 
   /* contador */
   .gof-count { display: flex; gap: clamp(8px, 1.4vw, 14px); margin-top: 8px; }
@@ -105,20 +137,31 @@
 
   /* ===== animación de entrada (solo si hay JavaScript; sin él todo se ve normal) ===== */
   .gof-js .gof-eyebrow, .gof-js .gof-sub, .gof-js .gof-count, .gof-js .gof-foot { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .gof-js .gof-man { opacity: 0; transform: translateY(46px) scale(.8); transition: opacity .5s ease, transform .9s cubic-bezier(.3,1.5,.5,1); }
+  .gof-js.gof-in .gof-man { opacity: 1; transform: none; }
   .gof-js .gof-title { opacity: 0; transform: translateY(22px) scale(.97); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
-  .gof-js .gof-track > li { opacity: 0; transform: translateY(34px); transition: opacity .7s ease, transform .9s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 90ms + .45s); }
-  .gof-js .gof-badge { transform: scale(0); transition: transform .5s cubic-bezier(.3,1.6,.5,1); transition-delay: calc(var(--i) * 90ms + 1s); }
+  .gof-js .gof-track > li { opacity: 0; transform: translateY(34px); transition: opacity .7s ease, transform .9s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 90ms + .7s); }
+  .gof-js .gof-badge { transform: scale(0); transition: transform .5s cubic-bezier(.3,1.6,.5,1); transition-delay: calc(var(--i) * 90ms + 1.25s); }
   .gof-js.gof-in .gof-eyebrow, .gof-js.gof-in .gof-sub, .gof-js.gof-in .gof-count, .gof-js.gof-in .gof-foot,
   .gof-js.gof-in .gof-title, .gof-js.gof-in .gof-track > li { opacity: 1; transform: none; }
   .gof-js.gof-in .gof-badge { transform: none; }
-  .gof-js.gof-in .gof-title { transition-delay: .12s; animation: gofShine 1.3s ease-in-out .75s forwards; }
-  .gof-js.gof-in .gof-sub { transition-delay: .28s; }
-  .gof-js.gof-in .gof-count { transition-delay: .4s; }
+  .gof-js.gof-in .gof-eyebrow { transition-delay: .3s; }
+  .gof-js.gof-in .gof-title { transition-delay: .4s; animation: gofShine 1.3s ease-in-out 1s forwards; }
+  .gof-js.gof-in .gof-sub { transition-delay: .55s; }
+  .gof-js.gof-in .gof-count { transition-delay: .65s; }
   .gof-js.gof-in .gof-foot { transition-delay: 1s; }
-  .gof-js.gof-in .gof-img::after { animation: gofSheen 1.1s ease-in-out forwards; animation-delay: calc(var(--i) * 90ms + .85s); }
+  .gof-js.gof-in .gof-img::after { animation: gofSheen 1.1s ease-in-out forwards; animation-delay: calc(var(--i) * 90ms + 1.1s); }
   .gof-js.gof-in .gof-lb { animation: gofOn .45s ease forwards; animation-delay: calc(var(--k) * 38ms + .15s); }
   .gof-js.gof-in .gof-lb b::after { animation: gofGlow var(--d, 2.4s) ease-in-out calc(var(--k) * 38ms + .6s) infinite; }
 
+  @keyframes gofBreath   { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .988); } }
+  @keyframes gofWave     { 0%, 58%, 100% { transform: rotate(0deg); } 66% { transform: rotate(-17deg); } 74% { transform: rotate(8deg); } 82% { transform: rotate(-14deg); } 90% { transform: rotate(4deg); } }
+  @keyframes gofWaveFast { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(-22deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-20deg); } 80% { transform: rotate(8deg); } }
+  @keyframes gofBlink    { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+  @keyframes gofFlutter  { from { transform: rotate(-5deg); } to { transform: rotate(9deg); } }
+  @keyframes gofSway     { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+  @keyframes gofJump     { 0%, 100% { transform: none; } 15% { transform: scale(1.06, .92); } 45% { transform: translateY(-16px) scale(.96, 1.05); } 75% { transform: scale(1.05, .94); } }
+  @keyframes gofHint     { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
   @keyframes gofShine { to { background-position: 0% 0, 0 0; } }
   @keyframes gofSheen { to { transform: translateX(130%); } }
   @keyframes gofOn    { to { opacity: 1; } }
@@ -126,7 +169,7 @@
   @keyframes gofFall  { from { transform: translate(0, 0); } to { transform: translate(var(--dx, 0px), var(--h, 900px)); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .gof-js .gof-eyebrow, .gof-js .gof-sub, .gof-js .gof-count, .gof-js .gof-foot, .gof-js .gof-title, .gof-js .gof-track > li { opacity: 1; transform: none; transition: none; }
+    .gof-js .gof-man, .gof-js .gof-eyebrow, .gof-js .gof-sub, .gof-js .gof-count, .gof-js .gof-foot, .gof-js .gof-title, .gof-js .gof-track > li { opacity: 1; transform: none; transition: none; }
     .gof-js .gof-badge { transform: none; transition: none; }
     .gof-snow { display: none; }
     .gof-lb { opacity: 1; }
@@ -139,6 +182,49 @@
   <div class="gof-lights" aria-hidden="true"></div>
   <div class="gof-in-wrap">
     <header class="gof-head">
+      <button type="button" class="gof-man" aria-label="Muñeco de nieve con el letrero de ofertas. Tócalo para que salude."
+              data-msgs="{% if gof_tope > 0 %}HASTA|-{{ gof_tope }}%{% else %}OFERTAS|de Navidad{% endif %};ENVÍOS|a todo el país;POR TIEMPO|limitado">
+        <span class="gof-hint" aria-hidden="true">Tócame</span>
+        <svg viewBox="0 -10 260 232" aria-hidden="true">
+          <defs>
+            <radialGradient id="gofsn" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#e6eefa"/><stop offset="1" stop-color="#b6c8e4"/></radialGradient>
+            <linearGradient id="gofwd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c08a52"/><stop offset="1" stop-color="#8e5f33"/></linearGradient>
+          </defs>
+          <g class="gof-m-jump"><g class="gof-m-all">
+            <g class="gof-m-sign">
+              <path d="M196 96V208" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/>
+              <g class="gof-m-board">
+                <rect x="140" y="30" width="114" height="68" rx="5" fill="url(#gofwd)" stroke="#6b4526" stroke-width="1.5"/>
+                <path d="M141 53H253M141 76H253" stroke="#6b4526" stroke-width=".8" opacity=".45"/>
+                <rect x="145.500" y="35.500" width="103" height="57" rx="3" fill="none" stroke="#f3d9a4" stroke-width="1" opacity=".75"/>
+                <text class="gof-m-t1" x="197" y="55" text-anchor="middle" font-size="11" letter-spacing="2.5" fill="#fbeee0">HASTA</text>
+                <text class="gof-m-t2" x="197" y="85" text-anchor="middle" font-size="30" font-weight="900" fill="#fff6dc" font-family="'Playfair Display', Georgia, serif">-30%</text>
+                <path d="M137 34Q139 24 152 27Q160 20 172 26Q184 21 196 27Q210 21 222 27Q236 22 246 28Q257 26 257 34Q250 38 240 35Q228 40 216 35Q204 39 192 35Q178 40 166 35Q152 39 137 34Z" fill="#fff"/>
+              </g>
+            </g>
+            <circle cx="92" cy="166" r="44" fill="url(#gofsn)"/>
+            <circle cx="92" cy="104" r="33" fill="url(#gofsn)"/>
+            <circle cx="92" cy="98" r="3" fill="#1b2540"/><circle cx="92" cy="112" r="3" fill="#1b2540"/><circle cx="92" cy="126" r="3" fill="#1b2540"/>
+            <g class="gof-m-arm"><path d="M63 98 30 68M41 78 29 81M38 75 40 63" fill="none" stroke="#7a5230" stroke-width="3.2" stroke-linecap="round"/></g>
+            <path d="M121 100 193 118M172 113 181 104" fill="none" stroke="#7a5230" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="92" cy="50" r="25" fill="url(#gofsn)"/>
+            <g class="gof-m-tail"><path d="M106 78C115 90 113 104 120 113L108 116C103 105 104 93 97 83Z" fill="#8c2236"/><path d="M110 108 119 106" stroke="#e2bd62" stroke-width="1.4"/></g>
+            <path d="M65 69Q92 84 119 69L120 80Q92 96 64 80Z" fill="#a9344a"/><path d="M66 74.500Q92 90 119 74.500" fill="none" stroke="#e2bd62" stroke-width="1.3" opacity=".9"/>
+            <circle cx="76" cy="57" r="5" fill="#f2a7b0" opacity=".45"/><circle cx="107" cy="59" r="4.5" fill="#f2a7b0" opacity=".4"/>
+            <g class="gof-m-eyes"><g class="gof-m-lids">
+              <circle cx="83" cy="45" r="3.4" fill="#1b2540"/><circle cx="101" cy="45" r="3.4" fill="#1b2540"/>
+              <circle cx="84.200" cy="43.800" r="1" fill="#fff"/><circle cx="102.200" cy="43.800" r="1" fill="#fff"/>
+            </g></g>
+            <path d="M92 50.500 119 56 92 60.500Z" fill="#e8873a"/>
+            <path d="M80 63Q90 71 101 64" fill="none" stroke="#1b2540" stroke-width="1.8" stroke-linecap="round" stroke-dasharray=".1 4.200"/>
+            <g class="gof-m-hat">
+              <rect x="64" y="24" width="56" height="7" rx="3.500" fill="#6a1425"/><rect x="74" y="-4" width="36" height="30" rx="3" fill="#8c2236"/>
+              <rect x="74" y="15" width="36" height="7" fill="#e2bd62"/><path d="M79 0V12" stroke="#b8475a" stroke-width="2.400" stroke-linecap="round" opacity=".7"/>
+            </g>
+          </g></g>
+          <ellipse cx="130" cy="213" rx="128" ry="15" fill="#dfe8f6"/><ellipse cx="112" cy="208" rx="74" ry="6" fill="#fff" opacity=".8"/>
+        </svg>
+      </button>
       <p class="gof-eyebrow">Navidad en glee</p>
       <h2 class="gof-title" id="gof-titulo">{{ gof_titulo }}</h2>
       {% if gof_subtitulo != blank %}<p class="gof-sub">{{ gof_subtitulo }}</p>{% endif %}
@@ -212,6 +298,66 @@
       return true;
     };
     if (tick()) var iv = setInterval(function () { if (!tick()) clearInterval(iv); }, 1000);
+  }
+
+  /* muñeco: letrero, ojos que siguen el dedo o el mouse, y saludo al tocarlo */
+  var man = sec.querySelector('.gof-man');
+  if (man) {
+    var eyes = man.querySelector('.gof-m-eyes'), board = man.querySelector('.gof-m-board'), t1 = man.querySelector('.gof-m-t1'), t2 = man.querySelector('.gof-m-t2');
+    var msgs = (man.getAttribute('data-msgs') || '').split(';').map(function (m) { return m.split('|'); }), mi = 0, actx = null;
+    var pinta = function () {
+      t1.textContent = msgs[mi][0];
+      t2.textContent = msgs[mi][1];
+      t2.setAttribute('font-size', msgs[mi][1].length <= 5 ? 30 : msgs[mi][1].length <= 9 ? 19 : 13.5);
+      t2.setAttribute('y', msgs[mi][1].length <= 5 ? 85 : 80);
+    };
+    pinta();
+    var raf = 0, px = 0, py = 0;
+    var mira = function () {
+      raf = 0;
+      var r = man.getBoundingClientRect(), dx = px - (r.left + r.width * .355), dy = py - (r.top + r.height * .26), d = Math.sqrt(dx * dx + dy * dy) || 1, k = Math.min(1, d / 110) * 2.4;
+      eyes.style.transform = 'translate(' + (dx / d * k).toFixed(2) + 'px,' + (dy / d * k).toFixed(2) + 'px)';
+    };
+    if (!reduce) sec.addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; if (!raf) raf = requestAnimationFrame(mira); }, { passive: true });
+    var campanita = function () {
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        actx = actx || new AC();
+        if (actx.state === 'suspended') actx.resume();
+        var t = actx.currentTime + .02;
+        [[1568, 0], [2093, .12]].forEach(function (n) {
+          var o = actx.createOscillator(), g = actx.createGain();
+          o.type = 'sine'; o.frequency.value = n[0];
+          g.gain.setValueAtTime(.0001, t + n[1]); g.gain.linearRampToValueAtTime(.07, t + n[1] + .005); g.gain.exponentialRampToValueAtTime(.0001, t + n[1] + .9);
+          o.connect(g); g.connect(actx.destination); o.start(t + n[1]); o.stop(t + n[1] + 1);
+        });
+      } catch (e) {}
+    };
+    man.addEventListener('click', function () {
+      man.classList.add('gof-tocado');
+      campanita();
+      // el letrero gira y cambia de mensaje
+      board.classList.add('gof-flip');
+      setTimeout(function () { mi = (mi + 1) % msgs.length; pinta(); board.classList.remove('gof-flip'); }, 270);
+      if (reduce) return;
+      man.classList.remove('gof-hi'); void man.offsetWidth; man.classList.add('gof-hi');
+      setTimeout(function () { man.classList.remove('gof-hi'); }, 800);
+      // nieve que salta
+      if (!sec.animate) return;
+      var r = man.getBoundingClientRect(), sr = sec.getBoundingClientRect(), cx = r.left - sr.left + r.width * .355, cy = r.top - sr.top + r.height * .45;
+      for (var i = 0; i < 14; i++) {
+        var b = document.createElement('i'), sz = rnd(5, 11), dx = rnd(-90, 90), dy = -rnd(50, 120);
+        b.className = 'gof-ball';
+        b.style.width = b.style.height = sz.toFixed(1) + 'px';
+        sec.appendChild(b);
+        b.animate([
+          { transform: 'translate(' + cx + 'px,' + cy + 'px) scale(.3)', opacity: 0 },
+          { transform: 'translate(' + (cx + dx * .6) + 'px,' + (cy + dy) + 'px) scale(1)', opacity: 1, offset: .4 },
+          { transform: 'translate(' + (cx + dx) + 'px,' + (cy + dy + rnd(70, 130)) + 'px) scale(.6)', opacity: 0 }
+        ], { duration: rnd(800, 1200), easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' }).onfinish = (function (n) { return function () { n.remove(); }; })(b);
+      }
+    });
   }
 
   /* flechas */
