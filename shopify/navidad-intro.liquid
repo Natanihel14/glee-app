@@ -115,12 +115,13 @@
 
   /* trineo */
   .gnv-sleigh { position: absolute; left: 0; top: 0; z-index: 1; width: var(--sw, 300px); will-change: transform; }
-  /* la imagen va cortada en 5 piezas (trineo y cada reno): cada una sube, baja y cabecea a destiempo, como galopando */
+  /* la imagen trae dos poses de galope, una junto a la otra: se alternan rápido y los renos mueven las patas (sin cortar nada) */
   .gnv-sleigh { aspect-ratio: 900 / 371; }
-  .gnv-sleigh i { position: absolute; top: 0; height: 100%; background-repeat: no-repeat; will-change: transform;
-    animation: gnvGal var(--gd, .34s) ease-in-out var(--dl, 0s) infinite alternate; }
+  .gnv-sleigh i { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 200% 100%; background-position: 0 0; will-change: transform;
+    animation: gnvLegs .3s steps(1) infinite, gnvRock .6s ease-in-out infinite alternate; }
   #gnv-intro .gnv-sleigh { filter: brightness(.9) saturate(.95); }
-  @keyframes gnvGal { from { transform: translateY(calc(var(--a) * -1)) rotate(calc(var(--r) * -1)); } to { transform: translateY(var(--a)) rotate(var(--r)); } }
+  @keyframes gnvLegs { 0% { background-position: 0 0; } 50% { background-position: 100% 0; } }
+  @keyframes gnvRock { from { transform: translateY(-1.500%) rotate(-.8deg); } to { transform: translateY(1.500%) rotate(.8deg); } }
   .gnv-spark { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; }
   .gnv-spark svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 4px rgba(255,214,120,.9)); }
 
@@ -209,7 +210,7 @@
   var PREVIEW = false;
   // Imágenes: súbelas en Contenido → Archivos con estos mismos nombres
   var IMG = {
-    trineo: "{{ 'glee-trineo.webp' | file_url }}",
+    trineo: "{{ 'glee-santa.webp' | file_url }}",
     fondo: "{{ 'glee-noche.webp' | file_url }}",
     fondoMovil: "{{ 'glee-noche-movil.webp' | file_url }}"
   };
@@ -300,13 +301,7 @@
     d.className = 'gnv-sleigh';
     d.style.setProperty('--sw', w + 'px');
     d.style.opacity = 0;
-    // piezas: [desde, hasta, sube-baja, cabeceo en grados, duración, desfase]
-    var piezas = [[0, .345, .006, 1.2, .62, 0], [.345, .495, .011, 3.2, .3, 0], [.495, .65, .011, 3.2, .3, .3], [.65, .815, .011, 3.2, .3, .08], [.815, 1, .011, 3.2, .3, .38]], h = '';
-    piezas.forEach(function (q) {
-      h += '<i style="left:' + (q[0] * 100).toFixed(2) + '%;width:calc(' + ((q[1] - q[0]) * 100).toFixed(2) + '% + .7px);background-image:url(&quot;' + IMG.trineo +
-        '&quot;);background-size:' + w + 'px 100%;background-position:' + (-q[0] * w).toFixed(2) + 'px 0;--a:' + (w * q[2]).toFixed(2) + 'px;--r:' + q[3] + 'deg;--gd:' + q[4] + 's;--dl:-' + q[5] + 's"></i>';
-    });
-    d.innerHTML = h;
+    d.innerHTML = '<i style="background-image:url(&quot;' + IMG.trineo + '&quot;)"></i>';
     return d;
   }
   // vuelo en curva: sale de P0, pasa por M y sale por P2 (coordenadas dentro de "box")
