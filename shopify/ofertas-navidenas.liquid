@@ -11,6 +11,8 @@
 {% assign gof_maximo    = 8 %}                      {% comment %} cuántos productos mostrar {% endcomment %}
 {% assign gof_termina   = '2026-12-24T23:59:59-06:00' %} {% comment %} cuándo terminan (para el contador). Déjalo vacío '' para quitar el contador {% endcomment %}
 
+{% assign gof_muneco    = 'glee-muneco.webp' %}        {% comment %} imagen del muñeco: súbela en Contenido → Archivos con este mismo nombre {% endcomment %}
+
 {% assign gof_col = collections[gof_coleccion] %}
 {% if gof_col.products.size > 0 %}
 {% assign gof_tope = 0 %}
@@ -43,29 +45,30 @@
     background-size: 300% 100%, 100% 100%; background-position: 100% 0, 0 0; background-repeat: no-repeat; }
   .gof-sub { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: clamp(14px, 2vw, 18px); color: var(--crema); opacity: .85; }
 
-  /* muñeco de nieve con el letrero: saluda, parpadea, sigue con los ojos y reacciona al tocarlo */
-  .gof-man { position: relative; display: block; width: clamp(250px, 36vw, 330px); margin: 0 auto 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit;
+  /* muñeco de nieve (imagen con 4 poses en una tira): respira, saluda, parpadea y reacciona al tocarlo */
+  .gof-man { position: relative; display: block; width: clamp(250px, 38vw, 350px); margin: 0 auto 6px; padding: 0; border: 0; background: none; color: inherit; font: inherit;
     cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  .gof-man svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .gof-man::before { content: ''; position: absolute; left: -12%; right: -12%; top: -8%; bottom: -4%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,240,210,.2) 0%, rgba(255,240,210,0) 66%); }
   .gof-man:focus-visible { outline: 2px solid var(--oro); outline-offset: 6px; border-radius: 8px; }
-  .gof-m-jump, .gof-m-all, .gof-m-arm, .gof-m-lids, .gof-m-hat, .gof-m-tail, .gof-m-sign, .gof-m-board, .gof-m-bird, .gof-m-star { transform-box: fill-box; }
-  .gof-m-jump { transform-origin: 50% 100%; }
-  .gof-m-all  { transform-origin: 50% 100%; animation: gofBreath 3.2s ease-in-out infinite; }
-  .gof-m-arm  { transform-origin: 100% 100%; animation: gofWave 5s ease-in-out infinite; }
-  .gof-m-eyes { transition: transform .18s ease-out; }
-  .gof-m-lids { transform-origin: 50% 50%; animation: gofBlink 4.6s infinite; }
-  .gof-m-hat  { transform-origin: 20% 100%; transition: transform .35s cubic-bezier(.3,1.6,.5,1); }
-  .gof-m-tail { transform-origin: 0 0; animation: gofFlutter 2.4s ease-in-out infinite alternate; }
-  .gof-m-sign { transform-origin: 50% 100%; animation: gofSway 3.8s ease-in-out infinite alternate; }
-  .gof-m-board { transform-origin: 50% 50%; transition: transform .26s ease-in; }
-  .gof-m-board.gof-flip { transform: scaleX(0); }
-  .gof-m-bird { transform-origin: 50% 100%; animation: gofBird 3.6s ease-in-out infinite; }
-  .gof-m-star { transform-origin: 50% 50%; animation: gofStar 2.6s ease-in-out infinite; }
-  .gof-man.gof-hi .gof-m-bird { animation: gofFly .8s ease-in-out; }
-  .gof-man.gof-hi .gof-m-jump { animation: gofJump .75s cubic-bezier(.3,.6,.4,1); }
-  .gof-man.gof-hi .gof-m-hat { transform: translateY(-9px) rotate(-16deg); }
-  .gof-man.gof-hi .gof-m-arm { animation: gofWaveFast .75s ease-in-out; }
-  .gof-hint { position: absolute; left: 0; top: 9%; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 13px; color: var(--oro);
+  .gof-m-lean { display: block; transform-origin: 50% 100%; transition: transform .5s ease-out; }
+  .gof-m-jump { display: block; transform-origin: 50% 100%; }
+  .gof-m-body { position: relative; display: block; aspect-ratio: 640 / 616; transform-origin: 50% 100%; animation: gofBreath 3.4s ease-in-out infinite; }
+  .gof-m-img { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 400% 100%; background-position: 0 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
+  .gof-man[data-pose="1"] .gof-m-img { background-position: 33.333% 0; }
+  .gof-man[data-pose="2"] .gof-m-img { background-position: 66.667% 0; }
+  .gof-man[data-pose="3"] .gof-m-img { background-position: 100% 0; }
+  .gof-man[data-pose="1"] .gof-m-body { animation: gofWave .5s ease-in-out infinite; }
+  /* texto sobre el letrero de madera */
+  .gof-m-txt { position: absolute; left: 54%; top: 9.500%; width: 43%; height: 27%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2%;
+    transform: rotate(2.200deg); color: #fff6dc; text-shadow: 0 1px 0 rgba(60,30,10,.75), 0 0 6px rgba(60,30,10,.45); container-type: inline-size; transition: transform .22s ease-in, opacity .22s ease-in; }
+  .gof-m-txt.gof-flip { transform: rotate(2.200deg) scale(.6); opacity: 0; }
+  .gof-m-t1 { font-size: 8cqw; letter-spacing: .22em; padding-left: .22em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .gof-m-t2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 900; font-size: 27cqw; line-height: 1; white-space: nowrap; }
+  .gof-m-t2.gof-m-md { font-size: 15cqw; }
+  .gof-m-t2.gof-m-sm { font-size: 11.500cqw; }
+  .gof-man.gof-hi .gof-m-jump { animation: gofJump .8s cubic-bezier(.3,.6,.4,1); }
+  .gof-hint { position: absolute; left: -2%; top: 2%; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 14px; color: var(--oro);
     transform: rotate(-8deg); transition: opacity .4s ease; animation: gofHint 2.2s ease-in-out infinite; }
   .gof-man.gof-tocado .gof-hint { opacity: 0; animation: none; }
   .gof-ball { position: absolute; left: 0; top: 0; z-index: 3; border-radius: 50%; pointer-events: none;
@@ -157,17 +160,10 @@
   .gof-js.gof-in .gof-lb { animation: gofOn .45s ease forwards; animation-delay: calc(var(--k) * 38ms + .15s); }
   .gof-js.gof-in .gof-lb b::after { animation: gofGlow var(--d, 2.4s) ease-in-out calc(var(--k) * 38ms + .6s) infinite; }
 
-  @keyframes gofBreath   { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .988); } }
-  @keyframes gofWave     { 0%, 58%, 100% { transform: rotate(0deg); } 66% { transform: rotate(-17deg); } 74% { transform: rotate(8deg); } 82% { transform: rotate(-14deg); } 90% { transform: rotate(4deg); } }
-  @keyframes gofWaveFast { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(-22deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-20deg); } 80% { transform: rotate(8deg); } }
-  @keyframes gofBlink    { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
-  @keyframes gofFlutter  { from { transform: rotate(-5deg); } to { transform: rotate(9deg); } }
-  @keyframes gofSway     { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
-  @keyframes gofJump     { 0%, 100% { transform: none; } 15% { transform: scale(1.06, .92); } 45% { transform: translateY(-16px) scale(.96, 1.05); } 75% { transform: scale(1.05, .94); } }
-  @keyframes gofBird     { 0%, 70%, 100% { transform: none; } 76% { transform: translateY(-3px) rotate(-6deg); } 82% { transform: none; } 88% { transform: translateY(-2px) rotate(5deg); } 94% { transform: none; } }
-  @keyframes gofFly      { 0%, 100% { transform: none; } 35% { transform: translate(-5px, -20px) rotate(-18deg); } 65% { transform: translate(3px, -12px) rotate(10deg); } }
-  @keyframes gofStar     { 0%, 100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.2); opacity: 1; } }
-  @keyframes gofHint     { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+  @keyframes gofBreath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .986); } }
+  @keyframes gofWave   { 0%, 100% { transform: rotate(-1.300deg); } 50% { transform: rotate(1.300deg); } }
+  @keyframes gofJump   { 0%, 100% { transform: none; } 15% { transform: scale(1.05, .93); } 45% { transform: translateY(-7%) scale(.97, 1.04); } 75% { transform: scale(1.04, .95); } }
+  @keyframes gofHint   { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
   @keyframes gofShine { to { background-position: 0% 0, 0 0; } }
   @keyframes gofSheen { to { transform: translateX(130%); } }
   @keyframes gofOn    { to { opacity: 1; } }
@@ -188,113 +184,13 @@
   <div class="gof-lights" aria-hidden="true"></div>
   <div class="gof-in-wrap">
     <header class="gof-head">
-      <button type="button" class="gof-man" aria-label="Muñeco de nieve con el letrero de ofertas. Tócalo para que salude."
+      <button type="button" class="gof-man" data-pose="0" hidden aria-label="Muñeco de nieve con el letrero de ofertas. Tócalo para que salude."
               data-msgs="{% if gof_tope > 0 %}HASTA|-{{ gof_tope }}%{% else %}OFERTAS|de Navidad{% endif %};ENVÍOS|a todo el país;POR TIEMPO|limitado">
         <span class="gof-hint" aria-hidden="true">Tócame</span>
-        <svg viewBox="0 -16 300 252" aria-hidden="true">
-          <defs>
-            <radialGradient id="gofsn" cx="36%" cy="28%" r="82%"><stop offset="0" stop-color="#ffffff"/><stop offset=".62" stop-color="#eaf1fb"/><stop offset="1" stop-color="#aebfdf"/></radialGradient>
-            <radialGradient id="gofhalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff0d2" stop-opacity=".22"/><stop offset="1" stop-color="#fff0d2" stop-opacity="0"/></radialGradient>
-            <linearGradient id="gofwd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8935a"/><stop offset="1" stop-color="#8a5a30"/></linearGradient>
-            <linearGradient id="gofhat" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8475a"/><stop offset=".5" stop-color="#9c2a3d"/><stop offset="1" stop-color="#6e1626"/></linearGradient>
-            <linearGradient id="gofgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9d7ee"/></linearGradient>
-            <linearGradient id="gofnz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6a04d"/><stop offset="1" stop-color="#d96f24"/></linearGradient>
-          </defs>
-          <circle cx="116" cy="112" r="118" fill="url(#gofhalo)"/>
-          <!-- pinito con estrella -->
-          <g>
-            <rect x="29" y="196" width="6" height="14" fill="#6b4526"/>
-            <path d="M32 132 50 166H41L56 190H43L60 208H4L21 190H8L23 166H14Z" fill="#2f5a48"/>
-            <path d="M32 132 41 149Q32 153 23 149ZM23 166Q32 172 41 166L47 177Q32 183 17 177ZM21 190Q32 196 43 190L50 199Q32 205 14 199Z" fill="#fff" opacity=".9"/>
-            <path class="gof-m-star" d="M32 118 34.600 126.500 43 127 36.300 132 38.800 140.500 32 135.500 25.200 140.500 27.700 132 21 127 29.400 126.500Z" fill="#f0c95f" stroke="#b98a35" stroke-width=".8" stroke-linejoin="round"/>
-          </g>
-          <g class="gof-m-jump"><g class="gof-m-all">
-            <!-- letrero -->
-            <g class="gof-m-sign">
-              <path d="M212 94V214" stroke="#6b4526" stroke-width="6.500" stroke-linecap="round"/><path d="M210.500 96V212" stroke="#9a6a3c" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-              <g class="gof-m-board">
-                <rect x="160" y="26" width="112" height="70" rx="6" fill="url(#gofwd)" stroke="#5f3d20" stroke-width="1.600"/>
-                <path d="M161 49.500H271M161 73H271" stroke="#5f3d20" stroke-width=".9" opacity=".5"/>
-                <path d="M170 38Q190 35 206 39M228 62Q246 59 262 63M172 86Q188 83 200 87" fill="none" stroke="#5f3d20" stroke-width=".7" opacity=".35" stroke-linecap="round"/>
-                <rect x="165.500" y="31.500" width="101" height="59" rx="3.500" fill="none" stroke="#f6dfae" stroke-width="1" opacity=".8"/>
-                <circle cx="169" cy="35" r="1.500" fill="#4a2f18"/><circle cx="263" cy="35" r="1.500" fill="#4a2f18"/><circle cx="169" cy="87" r="1.500" fill="#4a2f18"/><circle cx="263" cy="87" r="1.500" fill="#4a2f18"/>
-                <text class="gof-m-t1" x="216" y="52" text-anchor="middle" font-size="11" letter-spacing="2.500" fill="#fbeee0">HASTA</text>
-                <text class="gof-m-t2" x="216" y="82" text-anchor="middle" font-size="30" font-weight="900" fill="#fff6dc" font-family="'Playfair Display', Georgia, serif">-30%</text>
-                <path d="M157 30Q159 20 172 23Q180 16 192 22Q204 17 216 23Q230 17 242 23Q256 18 264 24Q275 22 275 30Q268 34 258 31Q246 36 234 31Q222 35 210 31Q196 36 184 31Q170 35 157 30Z" fill="#fff"/>
-                <path d="M176 32Q177.500 43 179.500 32ZM238 32Q240 46 242.500 32ZM252 31Q253 38 254.500 31Z" fill="#fff"/>
-              </g>
-              <!-- pajarito -->
-              <g class="gof-m-bird">
-                <path d="M244 12 233 8 236 16Z" fill="#9c2a3d"/>
-                <ellipse cx="252" cy="13" rx="9.500" ry="7.500" fill="#d1495b"/><path d="M246 13Q251 8 258 13Q252 18 246 13Z" fill="#a9344a"/>
-                <circle cx="260" cy="7" r="5.600" fill="#d1495b"/><path d="M258 2 261-4 263 3Z" fill="#d1495b"/>
-                <path d="M264.500 6 270.500 8 264.500 10Z" fill="#f0a23c"/><circle cx="261.500" cy="6.300" r="1.200" fill="#1b2540"/>
-                <path d="M250 20V24M254 20V24" stroke="#f0a23c" stroke-width="1.200" stroke-linecap="round"/>
-              </g>
-            </g>
-            <!-- sombra en la nieve -->
-            <ellipse cx="116" cy="212" rx="50" ry="7" fill="#8ea3c8" opacity=".45"/>
-            <!-- cuerpo -->
-            <circle cx="112" cy="170" r="46" fill="url(#gofsn)"/>
-            <ellipse cx="112" cy="139" rx="33" ry="8" fill="#8ea3c8" opacity=".32"/>
-            <circle cx="112" cy="108" r="33" fill="url(#gofsn)"/>
-            <ellipse cx="112" cy="82" rx="25" ry="6" fill="#8ea3c8" opacity=".32"/>
-            <path d="M82 152Q86 146 92 148M132 186Q138 184 141 178M90 190Q95 196 102 196" fill="none" stroke="#fff" stroke-width="1.600" stroke-linecap="round" opacity=".9"/>
-            <g fill="#232c48"><circle cx="112" cy="102" r="3.600"/><circle cx="112" cy="117" r="3.600"/><circle cx="112" cy="132" r="3.600"/></g>
-            <g fill="#fff" opacity=".7"><circle cx="110.800" cy="100.800" r="1"/><circle cx="110.800" cy="115.800" r="1"/><circle cx="110.800" cy="130.800" r="1"/></g>
-            <!-- brazo que saluda, con guante -->
-            <g class="gof-m-arm">
-              <path d="M83 103 50 73" fill="none" stroke="#6b4526" stroke-width="3.600" stroke-linecap="round"/><path d="M66 88 58 91" fill="none" stroke="#6b4526" stroke-width="2.600" stroke-linecap="round"/>
-              <g transform="rotate(-42 46 68)">
-                <rect x="38" y="52" width="16" height="20" rx="8" fill="#b23a4e"/><ellipse cx="55.500" cy="63" rx="4.200" ry="6" fill="#b23a4e" transform="rotate(-24 55.500 63)"/>
-                <rect x="37" y="68" width="18" height="7" rx="3" fill="#f6e9d8"/><path d="M41 69V74M46 69V74M51 69V74" stroke="#d9c7ae" stroke-width="1"/>
-              </g>
-            </g>
-            <!-- brazo que sostiene el letrero, con guante -->
-            <path d="M141 106 203 123" fill="none" stroke="#6b4526" stroke-width="3.600" stroke-linecap="round"/><path d="M172 114 180 106" fill="none" stroke="#6b4526" stroke-width="2.600" stroke-linecap="round"/>
-            <g transform="rotate(16 208 124)"><rect x="196" y="118" width="7" height="13" rx="3" fill="#f6e9d8"/><rect x="201" y="114" width="19" height="19" rx="8" fill="#b23a4e"/><path d="M207 119H216M207 124H216" stroke="#8c2236" stroke-width="1.300" stroke-linecap="round"/></g>
-            <!-- cabeza -->
-            <circle cx="112" cy="54" r="27" fill="url(#gofsn)"/>
-            <!-- bufanda tejida -->
-            <g class="gof-m-tail">
-              <path d="M126 82C134 92 133 108 140 120L126 124C121 112 122 96 115 86Z" fill="#8c2236"/>
-              <path d="M123 98 135 95M125 108 137 105" stroke="#f0c95f" stroke-width="2" stroke-linecap="round"/>
-              <path d="M127 124 126 131M131 123 131 130M135 122 136 129M139 120 141 127" stroke="#8c2236" stroke-width="1.800" stroke-linecap="round"/>
-            </g>
-            <path d="M83 71Q112 90 141 71L143 84Q112 104 81 84Z" fill="#b23a4e"/>
-            <path d="M82.500 76Q112 95 141.500 76" fill="none" stroke="#f0c95f" stroke-width="1.600"/><path d="M82 81Q112 100 142 81" fill="none" stroke="#8c2236" stroke-width="1.200" opacity=".8"/>
-            <rect x="119" y="78" width="15" height="14" rx="5" fill="#9c2a3d" transform="rotate(-20 126 85)"/>
-            <!-- carita -->
-            <circle cx="93" cy="62" r="6" fill="#f59aa8" opacity=".5"/><circle cx="132" cy="63" r="5.500" fill="#f59aa8" opacity=".45"/>
-            <path d="M96 41Q101.500 37.500 107 41M117 41Q122.500 37.500 128 41" fill="none" stroke="#232c48" stroke-width="1.500" stroke-linecap="round"/>
-            <g class="gof-m-eyes"><g class="gof-m-lids">
-              <circle cx="101.500" cy="49.500" r="4.300" fill="#232c48"/><circle cx="122.500" cy="49.500" r="4.300" fill="#232c48"/>
-              <circle cx="103" cy="48" r="1.500" fill="#fff"/><circle cx="124" cy="48" r="1.500" fill="#fff"/>
-              <circle cx="100.300" cy="51.200" r=".7" fill="#fff" opacity=".8"/><circle cx="121.300" cy="51.200" r=".7" fill="#fff" opacity=".8"/>
-            </g></g>
-            <g fill="#232c48"><circle cx="99" cy="66.500" r="1.600"/><circle cx="104" cy="70.300" r="1.600"/><circle cx="110.500" cy="72" r="1.600"/><circle cx="117" cy="71" r="1.600"/><circle cx="122.500" cy="67.500" r="1.600"/></g>
-            <path d="M111 53.500Q127 54 143 60.500Q127 63 111 63.500Q108.500 58.500 111 53.500Z" fill="url(#gofnz)"/><path d="M119 55.500V58M127 57V59.500" stroke="#b9591a" stroke-width=".9" stroke-linecap="round" opacity=".7"/>
-            <!-- sombrero con acebo -->
-            <g class="gof-m-hat"><g transform="rotate(-7 112 28)">
-              <rect x="80" y="23" width="64" height="9" rx="4.500" fill="#5c0f1e"/>
-              <rect x="92" y="-9" width="40" height="34" rx="4" fill="url(#gofhat)"/>
-              <rect x="92" y="13" width="40" height="8.500" fill="#f0c95f"/><rect x="92" y="13" width="40" height="2.500" fill="#fbe6a6"/>
-              <path d="M98-4V8" stroke="#d87a8a" stroke-width="2.600" stroke-linecap="round" opacity=".6"/>
-              <path d="M128 18Q136 8 146 12Q142 22 130 22ZM128 19Q122 8 112 11Q115 21 126 22Z" fill="#3d7059" stroke="#24463a" stroke-width=".8" stroke-linejoin="round"/>
-              <circle cx="127" cy="20" r="3.400" fill="#d1344a"/><circle cx="132" cy="23" r="3" fill="#b3263b"/><circle cx="123.500" cy="24" r="2.800" fill="#c42d42"/><circle cx="126" cy="19" r="1" fill="#fff" opacity=".7"/>
-              <path d="M90 23Q96 18 104 22Q112 17 122 22Q130 18 136 23Q112 27 90 23Z" fill="#fff" opacity=".95"/>
-            </g></g>
-          </g></g>
-          <!-- nieve del suelo y regalos -->
-          <path d="M4 224Q56 196 150 199Q244 196 296 224Q150 242 4 224Z" fill="url(#gofgr)"/>
-          <path d="M60 212Q110 203 170 207" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-          <g>
-            <rect x="236" y="186" width="34" height="28" rx="2" fill="#9c2a3d"/><rect x="233" y="181" width="40" height="9" rx="2" fill="#b23a4e"/>
-            <rect x="250" y="181" width="6" height="33" fill="#f0c95f"/><path d="M253 181Q244 170 240 177Q242 183 253 181ZM253 181Q262 170 266 177Q264 183 253 181Z" fill="#f0c95f" stroke="#b98a35" stroke-width=".7"/>
-            <rect x="268" y="198" width="22" height="18" rx="2" fill="#f6e9d8"/><rect x="266" y="194" width="26" height="7" rx="2" fill="#fffaf2"/><rect x="277" y="194" width="4.500" height="22" fill="#b23a4e"/>
-            <path d="M233 214Q252 209 292 216" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-          </g>
-        </svg>
+        <span class="gof-m-lean"><span class="gof-m-jump"><span class="gof-m-body">
+          <span class="gof-m-img" data-src="{{ gof_muneco | file_url }}"></span>
+          <span class="gof-m-txt" aria-hidden="true"><span class="gof-m-t1">Hasta</span><span class="gof-m-t2">-30%</span></span>
+        </span></span></span>
       </button>
       <p class="gof-eyebrow">Navidad en glee</p>
       <h2 class="gof-title" id="gof-titulo">{{ gof_titulo }}</h2>
@@ -371,25 +267,42 @@
     if (tick()) var iv = setInterval(function () { if (!tick()) clearInterval(iv); }, 1000);
   }
 
-  /* muñeco: letrero, ojos que siguen el dedo o el mouse, y saludo al tocarlo */
+  /* muñeco: carga la imagen, cambia de pose (saludo, parpadeo), se inclina hacia el dedo o el mouse y reacciona al tocarlo */
   var man = sec.querySelector('.gof-man');
   if (man) {
-    var eyes = man.querySelector('.gof-m-eyes'), board = man.querySelector('.gof-m-board'), t1 = man.querySelector('.gof-m-t1'), t2 = man.querySelector('.gof-m-t2');
-    var msgs = (man.getAttribute('data-msgs') || '').split(';').map(function (m) { return m.split('|'); }), mi = 0, actx = null;
+    var img = man.querySelector('.gof-m-img'), lean = man.querySelector('.gof-m-lean'), txt = man.querySelector('.gof-m-txt'), t1 = man.querySelector('.gof-m-t1'), t2 = man.querySelector('.gof-m-t2');
+    var msgs = (man.getAttribute('data-msgs') || '').split(';').map(function (m) { return m.split('|'); }), mi = 0, actx = null, ocupado = false;
+    // si la imagen no está subida, el muñeco simplemente no aparece
+    var pre = new Image();
+    pre.onload = function () { img.style.backgroundImage = 'url("' + pre.src + '")'; man.hidden = false; };
+    pre.src = img.getAttribute('data-src');
     var pinta = function () {
+      var n = msgs[mi][1].length;
       t1.textContent = msgs[mi][0];
       t2.textContent = msgs[mi][1];
-      t2.setAttribute('font-size', msgs[mi][1].length <= 5 ? 30 : msgs[mi][1].length <= 9 ? 19 : 13.5);
-      t2.setAttribute('y', msgs[mi][1].length <= 5 ? 82 : 77);
+      t2.className = 'gof-m-t2' + (n <= 5 ? '' : n <= 9 ? ' gof-m-md' : ' gof-m-sm');
     };
     pinta();
-    var raf = 0, px = 0, py = 0;
-    var mira = function () {
-      raf = 0;
-      var r = man.getBoundingClientRect(), dx = px - (r.left + r.width * .373), dy = py - (r.top + r.height * .27), d = Math.sqrt(dx * dx + dy * dy) || 1, k = Math.min(1, d / 110) * 2.4;
-      eyes.style.transform = 'translate(' + (dx / d * k).toFixed(2) + 'px,' + (dy / d * k).toFixed(2) + 'px)';
+    var visible = function () { return sec.classList.contains('gof-in') && !sec.classList.contains('gof-off') && !document.hidden; };
+    var pose = function (p, ms) {
+      if (ocupado) return;
+      man.setAttribute('data-pose', p);
+      setTimeout(function () { if (!ocupado) man.setAttribute('data-pose', 0); }, ms);
     };
-    if (!reduce) sec.addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; if (!raf) raf = requestAnimationFrame(mira); }, { passive: true });
+    if (!reduce) {
+      (function parpadea() { setTimeout(function () { if (visible() && man.getAttribute('data-pose') === '0') pose(2, 160); parpadea(); }, rnd(2600, 5200)); })();
+      (function saluda() { setTimeout(function () { if (visible()) pose(1, 1500); saluda(); }, rnd(5500, 8000)); })();
+      var raf = 0, px = 0;
+      sec.addEventListener('pointermove', function (e) {
+        px = e.clientX;
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = 0;
+          var r = man.getBoundingClientRect(), d = Math.max(-1, Math.min(1, (px - (r.left + r.width * .4)) / (innerWidth * .5)));
+          lean.style.transform = 'rotate(' + (d * 2.5).toFixed(2) + 'deg)';
+        });
+      }, { passive: true });
+    }
     var campanita = function () {
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
@@ -408,24 +321,29 @@
     man.addEventListener('click', function () {
       man.classList.add('gof-tocado');
       campanita();
-      // el letrero gira y cambia de mensaje
-      board.classList.add('gof-flip');
-      setTimeout(function () { mi = (mi + 1) % msgs.length; pinta(); board.classList.remove('gof-flip'); }, 270);
+      // el letrero cambia de mensaje
+      txt.classList.add('gof-flip');
+      setTimeout(function () { mi = (mi + 1) % msgs.length; pinta(); txt.classList.remove('gof-flip'); }, 230);
+      // carita feliz
+      ocupado = true;
+      man.setAttribute('data-pose', 3);
+      clearTimeout(man._t);
+      man._t = setTimeout(function () { ocupado = false; man.setAttribute('data-pose', 0); }, 1100);
       if (reduce) return;
       man.classList.remove('gof-hi'); void man.offsetWidth; man.classList.add('gof-hi');
-      setTimeout(function () { man.classList.remove('gof-hi'); }, 800);
+      setTimeout(function () { man.classList.remove('gof-hi'); }, 850);
       // nieve que salta
       if (!sec.animate) return;
-      var r = man.getBoundingClientRect(), sr = sec.getBoundingClientRect(), cx = r.left - sr.left + r.width * .373, cy = r.top - sr.top + r.height * .48;
-      for (var i = 0; i < 14; i++) {
-        var b = document.createElement('i'), sz = rnd(5, 11), dx = rnd(-90, 90), dy = -rnd(50, 120);
+      var r = man.getBoundingClientRect(), sr = sec.getBoundingClientRect(), cx = r.left - sr.left + r.width * .36, cy = r.top - sr.top + r.height * .5;
+      for (var i = 0; i < 16; i++) {
+        var b = document.createElement('i'), sz = rnd(5, 12), dx = rnd(-110, 110), dy = -rnd(60, 140);
         b.className = 'gof-ball';
         b.style.width = b.style.height = sz.toFixed(1) + 'px';
         sec.appendChild(b);
         b.animate([
           { transform: 'translate(' + cx + 'px,' + cy + 'px) scale(.3)', opacity: 0 },
           { transform: 'translate(' + (cx + dx * .6) + 'px,' + (cy + dy) + 'px) scale(1)', opacity: 1, offset: .4 },
-          { transform: 'translate(' + (cx + dx) + 'px,' + (cy + dy + rnd(70, 130)) + 'px) scale(.6)', opacity: 0 }
+          { transform: 'translate(' + (cx + dx) + 'px,' + (cy + dy + rnd(70, 140)) + 'px) scale(.6)', opacity: 0 }
         ], { duration: rnd(800, 1200), easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' }).onfinish = (function (n) { return function () { n.remove(); }; })(b);
       }
     });
