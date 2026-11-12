@@ -117,6 +117,8 @@
   .gnv-sleigh { position: absolute; left: 0; top: 0; z-index: 1; width: var(--sw, 300px); will-change: transform; }
   /* la imagen trae dos poses de galope, una junto a la otra: se alternan rápido y los renos mueven las patas (sin cortar nada) */
   .gnv-sleigh { aspect-ratio: 900 / 371; }
+  .gnv-sleigh.gnv-sil { aspect-ratio: auto; }
+  .gnv-sleigh svg { display: block; width: 100%; height: auto; overflow: visible; }
   .gnv-sleigh i { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 200% 100%; background-position: 0 0; will-change: transform;
     animation: gnvLegs .3s steps(1) infinite, gnvRock .6s ease-in-out infinite alternate; }
   #gnv-intro .gnv-sleigh { filter: brightness(.9) saturate(.95); }
@@ -287,7 +289,63 @@
   function SPARK(c) { return '<svg viewBox="0 0 24 24"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z" fill="' + c + '"/></svg>'; }
   var STARW = SPARK('#fff');
 
-  /* ---------- Trineo de Santa (imagen) ---------- */
+  /* ---------- Trineo en silueta (para la portada y los productos) ---------- */
+  // movimiento suave de ida y vuelta (SMIL: funciona en Chrome, Safari y Firefox)
+  function anim(type, vals, dur, begin) {
+    var v = vals.split(';'), kt = [], ks = [];
+    for (var i = 0; i < v.length; i++) { kt.push((i / (v.length - 1)).toFixed(3)); if (i) ks.push('.45 0 .55 1'); }
+    return '<animateTransform attributeName="transform" type="' + type + '" values="' + vals + '" keyTimes="' + kt.join(';') +
+      '" calcMode="spline" keySplines="' + ks.join(';') + '" dur="' + dur + 's" begin="-' + begin + 's" repeatCount="indefinite"/>';
+  }
+  function DEER(x, y, ph) {
+    var g = '.44';
+    return '<g transform="translate(' + x + ' ' + y + ')"><g>' + anim('translate', '0 0;0 -1.8;0 0', g, '0') +
+      '<path d="M8 27Q10 21 22 21Q31 21 36 22Q41 23 41 28Q40 33 33 34Q22 35 13 33Q7 31 8 27Z"/>' +
+      '<path d="M9 24Q4 20 2 22Q4 25 9 27Z"/>' +
+      // cuello, cabeza y astas: cabecean al correr
+      '<g>' + anim('rotate', '-4 38 26;5 38 26;-4 38 26', g, ph) +
+        '<path d="M35 25Q39 17 44 11L49 13Q45 21 41 29Z"/><path d="M43 9Q47 7 51 9Q55 11 58 13Q58 15 55 15Q50 15 45 14Q42 12 43 9Z"/><path d="M45 9L41 6L44 11Z"/>' +
+        '<g fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M46 8Q43 2 44-5M44.2 1Q40.5 0 38.5-3.5M44-2Q46-4 47-7"/><path d="M48 8Q49 2 53-3M50.6 2.2Q53.5 1.6 55.5-.6M52-1Q51-4 51.5-6"/></g>' +
+      '</g>' +
+      // patas: galope (delanteras y traseras en tiempos opuestos)
+      '<g fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+        '<g>' + anim('rotate', '-34 36 31;20 36 31;-34 36 31', g, ph) + '<path d="M37 31Q42 35 45 40L50 39.5"/></g>' +
+        '<g>' + anim('rotate', '-30 35 32;24 35 32;-30 35 32', g, (+ph + .06).toFixed(2)) + '<path d="M34 32Q37 38 39 43L44 44"/></g>' +
+        '<g>' + anim('rotate', '26 14 31;-26 14 31;26 14 31', g, ph) + '<path d="M13 31Q8 35 3 35.5L-1.5 33.5"/></g>' +
+        '<g>' + anim('rotate', '22 16 32;-30 16 32;22 16 32', g, (+ph + .06).toFixed(2)) + '<path d="M16 32Q12 38 7 41L2.5 41"/></g>' +
+      '</g></g></g>';
+  }
+  function SLEIGH(c) {
+    return '<svg viewBox="-2 -12 406 124"><g fill="' + c + '" stroke="' + c + '">' +
+      '<g>' +
+        '<path stroke="none" d="M6 72Q3 92 17 95L80 95Q96 95 99 81Q100 72 92 71Q86 71 86 77Q85 85 76 86L33 86Q28 86 28 79L28 66Q28 58 19 58Q11 58 9 64Q6 66 6 72Z"/>' +
+        '<path d="M9 64Q4 56 10 53Q15 52 15 57" fill="none" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<path d="M1 104Q50 110 93 103Q105 100 103 91Q101 85 96 88Q93 91 97 93" fill="none" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="M22 95L22 105M66 95L66 105" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path stroke="none" d="M13 62Q9 44 21 38Q28 35 33 42Q37 50 33 62Z"/>' +
+        '<path stroke="none" d="M35 86Q32 66 43 60Q51 57 58 62Q63 68 63 86Z"/><circle stroke="none" cx="51" cy="53" r="6.2"/>' +
+        '<path stroke="none" d="M50 56Q56 56 59 59Q58 66 52 66Q49 62 50 56Z"/><path stroke="none" d="M44.5 50Q46 42 54 43Q58 44 58 50Z"/>' +
+        // punta del gorro ondeando
+        '<g>' + anim('rotate', '0 46 46;-14 46 46;0 46 46', '.7', '0') + '<path stroke="none" d="M47 44Q41 40 36 45Q38 46 40 45Q43 44 46 47Z"/><circle stroke="none" cx="35.5" cy="46" r="2.6"/></g>' +
+        // brazo sacudiendo las riendas
+        '<g>' + anim('rotate', '4 57 68;-10 57 68;4 57 68', '.44', '0') +
+          '<path d="M57 69Q66 66 75 64" fill="none" stroke-width="3" stroke-linecap="round"/></g>' +
+        '<path fill="none" stroke-width="1" d="M75.24 65.27Q100 73 122 73"><animate attributeName="d" values="M75.24 65.27Q100 73 122 73;M74.03 60.94Q100 70 122 71.2;M75.24 65.27Q100 73 122 73" keyTimes="0;.5;1" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1" dur=".44s" repeatCount="indefinite"/></path>' +
+      '</g>' +
+      '<g>' + anim('translate', '0 0;0 -1.8;0 0', '.44', '0') + '<path d="M150 74L188 61M216 62L254 49M282 50L320 37" fill="none" stroke-width="1"/></g>' +
+      DEER(112, 46, '0') + DEER(178, 34, '.11') + DEER(244, 22, '.22') + DEER(310, 10, '.33') +
+      '</g></svg>';
+  }
+  function silEl(w, color) {
+    var d = document.createElement('div');
+    d.className = 'gnv-sleigh gnv-sil';
+    d.style.setProperty('--sw', w + 'px');
+    d.style.opacity = 0;
+    d.innerHTML = SLEIGH(color);
+    return d;
+  }
+
+  /* ---------- Trineo de Santa en imagen (solo para la intro) ---------- */
   // se carga desde el principio; lo que necesite el trineo espera a que esté listo (si falta el archivo, simplemente no sale)
   var trineoListo = false, trineoCola = [];
   function conTrineo(fn) { if (trineoListo) fn(); else trineoCola.push(fn); }
@@ -306,7 +364,7 @@
   }
   // vuelo en curva: sale de P0, pasa por M y sale por P2 (coordenadas dentro de "box")
   function fly(box, sl, P0, M, P2, dur, o, cb) {
-    var sw = sl.offsetWidth, sh = sw * 371 / 900, t0 = .58, u = 1 - t0;
+    var sw = sl.offsetWidth, sh = sl.offsetHeight || sw * 371 / 900, t0 = .58, u = 1 - t0, tilt = o.tilt == null ? 11 : o.tilt;
     var P1 = [(M[0] - u * u * P0[0] - t0 * t0 * P2[0]) / (2 * u * t0), (M[1] - u * u * P0[1] - t0 * t0 * P2[1]) / (2 * u * t0)];
     var st = 0, last = 0;
     function bz(t, i) { var v = 1 - t; return v * v * P0[i] + 2 * v * t * P1[i] + t * t * P2[i]; }
@@ -317,7 +375,7 @@
       var dx = 2 * (1 - t) * (P1[0] - P0[0]) + 2 * t * (P2[0] - P1[0]), dy = 2 * (1 - t) * (P1[1] - P0[1]) + 2 * t * (P2[1] - P1[1]);
       var ang = Math.atan2(dy, dx);
       sl.style.opacity = 1;
-      sl.style.transform = 'translate(' + (x - sw / 2).toFixed(1) + 'px,' + (y - sh / 2).toFixed(1) + 'px) rotate(' + Math.max(-10, Math.min(14, ang * 180 / Math.PI + 11)).toFixed(1) + 'deg)';
+      sl.style.transform = 'translate(' + (x - sw / 2).toFixed(1) + 'px,' + (y - sh / 2).toFixed(1) + 'px) rotate(' + Math.max(-10, Math.min(14, ang * 180 / Math.PI + tilt)).toFixed(1) + 'deg)';
       if (now - last > o.every && document.body.animate) {
         last = now;
         // destellos que salen de los patines
@@ -592,33 +650,33 @@
     return '<div class="gnv-frost"></div>' + snow(mobile ? 26 : 54, true, 1.45) + crystals(mobile ? 3 : 6) + lights(W) + pineTop('l') + pineTop('r');
   };
   T.afterHero = function (o) {
-    var sl = sleighEl(mobile ? 170 : 280);
+    var sl = silEl(mobile ? 140 : 230, '#7a5a57');
     o.appendChild(sl);
     function go() {
       if (!o.isConnected) return;
       if (o.classList.contains('gnv-off')) return setTimeout(go, 3000);
       var W = o.clientWidth, H = o.clientHeight, sw = sl.offsetWidth;
       fly(o, sl, [-sw * .7, H * .3], [W * .5, H * .13], [W + sw * .7, H * .02], mobile ? 5200 : 7000,
-        { stop: function () { return !o.isConnected; }, every: 40, spark: [5, mobile ? 9 : 12], color: '#d9ad4f' },
+        { stop: function () { return !o.isConnected; }, every: 40, spark: [5, mobile ? 9 : 12], color: '#d9ad4f', tilt: 7 },
         function () { setTimeout(go, 9000); });
     }
-    setTimeout(function () { conTrineo(go); }, introEl ? 4800 : 1500);
+    setTimeout(go, introEl ? 4800 : 1500);
   };
 
   /* ---------- Productos y colecciones: nieve suave + trineo chiquito arriba ---------- */
   T.page = function () { return snow(mobile ? 16 : 26, true, 1.4) + crystals(mobile ? 1 : 3); };
   T.afterPage = function (o) {
-    var sl = sleighEl(mobile ? 130 : 200);
+    var sl = silEl(mobile ? 110 : 170, '#7a5a57');
     o.appendChild(sl);
     function go() {
       if (!o.isConnected) return;
       if (o.classList.contains('gnv-off')) return setTimeout(go, 3000);
       var W = o.clientWidth, H = innerHeight, sw = sl.offsetWidth;
       fly(o, sl, [-sw * .7, H * .2], [W * .5, H * .1], [W + sw * .7, H * .04], mobile ? 5000 : 7500,
-        { stop: function () { return !o.isConnected; }, every: 45, spark: [4, 9], color: '#d9ad4f' },
+        { stop: function () { return !o.isConnected; }, every: 45, spark: [4, 9], color: '#d9ad4f', tilt: 7 },
         function () { setTimeout(go, 14000); });
     }
-    setTimeout(function () { conTrineo(go); }, introEl ? 4800 : 2500);
+    setTimeout(go, introEl ? 4800 : 2500);
   };
 
   // cascabeles + campanita
