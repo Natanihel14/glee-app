@@ -115,14 +115,18 @@
 
   /* trineo */
   .gnv-sleigh { position: absolute; left: 0; top: 0; z-index: 1; width: var(--sw, 300px); will-change: transform; }
-  /* la imagen trae dos poses de galope, una junto a la otra: se alternan rápido y los renos mueven las patas (sin cortar nada) */
-  .gnv-sleigh { aspect-ratio: 900 / 371; }
+  /* la imagen trae cuatro poses en una tira (patas estiradas / recogidas, con Santa normal / saludando): se alternan y todo cobra vida, sin cortar nada */
+  .gnv-sleigh { aspect-ratio: 800 / 329; }
   .gnv-sleigh.gnv-sil { aspect-ratio: auto; }
   .gnv-sleigh svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .gnv-sleigh i { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 200% 100%; background-position: 0 0; will-change: transform;
-    animation: gnvLegs .3s steps(1) infinite, gnvRock .6s ease-in-out infinite alternate; }
+  .gnv-sleigh i { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 400% 100%; background-position: 0 0; will-change: transform;
+    animation: gnvPoses 1.8s steps(1) infinite, gnvRock .6s ease-in-out infinite alternate; }
   #gnv-intro .gnv-sleigh { filter: brightness(.9) saturate(.95); }
-  @keyframes gnvLegs { 0% { background-position: 0 0; } 50% { background-position: 100% 0; } }
+  /* los renos cambian de pose cada 0.15 s; Santa va normal un momento y luego saluda */
+  @keyframes gnvPoses {
+    0%, 16.667% { background-position: 0 0; } 8.333%, 25% { background-position: 33.333% 0; }
+    33.333%, 50%, 66.667%, 83.333% { background-position: 66.667% 0; } 41.667%, 58.333%, 75%, 91.667% { background-position: 100% 0; }
+  }
   @keyframes gnvRock { from { transform: translateY(-1.500%) rotate(-.8deg); } to { transform: translateY(1.500%) rotate(.8deg); } }
   .gnv-spark { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; }
   .gnv-spark svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 4px rgba(255,214,120,.9)); }
@@ -364,7 +368,7 @@
   }
   // vuelo en curva: sale de P0, pasa por M y sale por P2 (coordenadas dentro de "box")
   function fly(box, sl, P0, M, P2, dur, o, cb) {
-    var sw = sl.offsetWidth, sh = sl.offsetHeight || sw * 371 / 900, t0 = .58, u = 1 - t0, tilt = o.tilt == null ? 11 : o.tilt;
+    var sw = sl.offsetWidth, sh = sl.offsetHeight || sw * 329 / 800, t0 = .58, u = 1 - t0, tilt = o.tilt == null ? 11 : o.tilt;
     var P1 = [(M[0] - u * u * P0[0] - t0 * t0 * P2[0]) / (2 * u * t0), (M[1] - u * u * P0[1] - t0 * t0 * P2[1]) / (2 * u * t0)];
     var st = 0, last = 0;
     function bz(t, i) { var v = 1 - t; return v * v * P0[i] + 2 * v * t * P1[i] + t * t * P2[i]; }
