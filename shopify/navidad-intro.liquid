@@ -115,8 +115,12 @@
 
   /* trineo */
   .gnv-sleigh { position: absolute; left: 0; top: 0; z-index: 1; width: var(--sw, 300px); will-change: transform; }
-  .gnv-sleigh img { display: block; width: 100%; height: auto; aspect-ratio: 900 / 371; filter: drop-shadow(0 4px 6px rgba(60,30,40,.3)); }
-  #gnv-intro .gnv-sleigh img { filter: brightness(.9) saturate(.95) drop-shadow(0 0 16px rgba(190,215,255,.35)); }
+  /* la imagen va cortada en 5 piezas (trineo y cada reno): cada una sube, baja y cabecea a destiempo, como galopando */
+  .gnv-sleigh { aspect-ratio: 900 / 371; }
+  .gnv-sleigh i { position: absolute; top: 0; height: 100%; background-repeat: no-repeat; will-change: transform;
+    animation: gnvGal var(--gd, .34s) ease-in-out var(--dl, 0s) infinite alternate; }
+  #gnv-intro .gnv-sleigh { filter: brightness(.9) saturate(.95); }
+  @keyframes gnvGal { from { transform: translateY(calc(var(--a) * -1)) rotate(calc(var(--r) * -1)); } to { transform: translateY(var(--a)) rotate(var(--r)); } }
   .gnv-spark { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; }
   .gnv-spark svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 4px rgba(255,214,120,.9)); }
 
@@ -182,6 +186,7 @@
   @media (prefers-reduced-motion: reduce) {
     .gnv-l { animation: gnvFade .4s ease forwards !important; transform: none; }
     .gnv-deco *, .gnv-amb * { animation: none !important; }
+    .gnv-sleigh i { animation: none !important; }
     .gnv-fall, .gnv-tw { display: none; }
     .gnv-garl, .gnv-lb, .gnv-hill { opacity: 1 !important; transform: none !important; }
     .gnv-tag { opacity: 1 !important; }
@@ -295,7 +300,13 @@
     d.className = 'gnv-sleigh';
     d.style.setProperty('--sw', w + 'px');
     d.style.opacity = 0;
-    d.innerHTML = '<img src="' + IMG.trineo + '" alt="">';
+    // piezas: [desde, hasta, sube-baja, cabeceo en grados, duración, desfase]
+    var piezas = [[0, .345, .006, 1.2, .62, 0], [.345, .495, .011, 3.2, .3, 0], [.495, .65, .011, 3.2, .3, .3], [.65, .815, .011, 3.2, .3, .08], [.815, 1, .011, 3.2, .3, .38]], h = '';
+    piezas.forEach(function (q) {
+      h += '<i style="left:' + (q[0] * 100).toFixed(2) + '%;width:calc(' + ((q[1] - q[0]) * 100).toFixed(2) + '% + .7px);background-image:url(&quot;' + IMG.trineo +
+        '&quot;);background-size:' + w + 'px 100%;background-position:' + (-q[0] * w).toFixed(2) + 'px 0;--a:' + (w * q[2]).toFixed(2) + 'px;--r:' + q[3] + 'deg;--gd:' + q[4] + 's;--dl:-' + q[5] + 's"></i>';
+    });
+    d.innerHTML = h;
     return d;
   }
   // vuelo en curva: sale de P0, pasa por M y sale por P2 (coordenadas dentro de "box")
