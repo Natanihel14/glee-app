@@ -11,7 +11,8 @@
 {% assign gof_maximo    = 8 %}                      {% comment %} cuántos productos mostrar {% endcomment %}
 {% assign gof_termina   = '2026-12-24T23:59:59-06:00' %} {% comment %} cuándo terminan (para el contador). Déjalo vacío '' para quitar el contador {% endcomment %}
 
-{% assign gof_muneco    = 'glee-muneco.webp' %}        {% comment %} imagen del muñeco: súbela en Contenido → Archivos con este mismo nombre {% endcomment %}
+{% assign gof_muneco       = 'glee-muneco.webp' %}        {% comment %} muñeco animado: súbelo en Contenido → Archivos con este mismo nombre {% endcomment %}
+{% assign gof_muneco_feliz = 'glee-muneco-feliz.webp' %}  {% comment %} carita feliz, para cuando lo tocan {% endcomment %}
 
 {% assign gof_col = collections[gof_coleccion] %}
 {% if gof_col.products.size > 0 %}
@@ -45,7 +46,7 @@
     background-size: 300% 100%, 100% 100%; background-position: 100% 0, 0 0; background-repeat: no-repeat; }
   .gof-sub { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: clamp(14px, 2vw, 18px); color: var(--crema); opacity: .85; }
 
-  /* muñeco de nieve (imagen con 4 poses en una tira): respira, saluda, parpadea y reacciona al tocarlo */
+  /* muñeco de nieve (imagen animada, sale de un video): saluda y parpadea solo; al tocarlo se pone feliz */
   .gof-man { position: relative; display: block; width: clamp(250px, 38vw, 350px); margin: 0 auto 6px; padding: 0; border: 0; background: none; color: inherit; font: inherit;
     cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .gof-man::before { content: ''; position: absolute; left: -12%; right: -12%; top: -8%; bottom: -4%; border-radius: 50%; pointer-events: none;
@@ -53,20 +54,19 @@
   .gof-man:focus-visible { outline: 2px solid var(--oro); outline-offset: 6px; border-radius: 8px; }
   .gof-m-lean { display: block; transform-origin: 50% 100%; transition: transform .5s ease-out; }
   .gof-m-jump { display: block; transform-origin: 50% 100%; }
-  .gof-m-body { position: relative; display: block; aspect-ratio: 640 / 616; transform-origin: 50% 100%; animation: gofBreath 3.4s ease-in-out infinite; }
-  .gof-m-img { position: absolute; inset: 0; background-repeat: no-repeat; background-size: 400% 100%; background-position: 0 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
-  .gof-man[data-pose="1"] .gof-m-img { background-position: 33.333% 0; }
-  .gof-man[data-pose="2"] .gof-m-img { background-position: 66.667% 0; }
-  .gof-man[data-pose="3"] .gof-m-img { background-position: 100% 0; }
-  .gof-man[data-pose="1"] .gof-m-body { animation: gofWave .5s ease-in-out infinite; }
+  .gof-m-body { position: relative; display: block; aspect-ratio: 380 / 324; }
+  .gof-m-body img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; }
+  .gof-m-feliz { opacity: 0; }
+  .gof-man.gof-feliz .gof-m-anim { opacity: 0; }
+  .gof-man.gof-feliz .gof-m-feliz { opacity: 1; }
   /* texto sobre el letrero de madera */
-  .gof-m-txt { position: absolute; left: 54%; top: 9.500%; width: 43%; height: 27%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2%;
-    transform: rotate(2.200deg); color: #fff6dc; text-shadow: 0 1px 0 rgba(60,30,10,.75), 0 0 6px rgba(60,30,10,.45); container-type: inline-size; transition: transform .22s ease-in, opacity .22s ease-in; }
-  .gof-m-txt.gof-flip { transform: rotate(2.200deg) scale(.6); opacity: 0; }
-  .gof-m-t1 { font-size: 8cqw; letter-spacing: .22em; padding-left: .22em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
-  .gof-m-t2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 900; font-size: 27cqw; line-height: 1; white-space: nowrap; }
-  .gof-m-t2.gof-m-md { font-size: 15cqw; }
-  .gof-m-t2.gof-m-sm { font-size: 11.500cqw; }
+  .gof-m-txt { position: absolute; left: 58.500%; top: 8%; width: 37%; height: 28%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2%;
+    transform: rotate(1.200deg); color: #fff6dc; text-shadow: 0 1px 0 rgba(60,30,10,.75), 0 0 6px rgba(60,30,10,.45); container-type: inline-size; transition: transform .22s ease-in, opacity .22s ease-in; }
+  .gof-m-txt.gof-flip { transform: rotate(1.200deg) scale(.6); opacity: 0; }
+  .gof-m-t1 { font-size: 9.5cqw; letter-spacing: .22em; padding-left: .22em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .gof-m-t2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 900; font-size: 32cqw; line-height: 1; white-space: nowrap; }
+  .gof-m-t2.gof-m-md { font-size: 16.5cqw; }
+  .gof-m-t2.gof-m-sm { font-size: 12.5cqw; }
   .gof-man.gof-hi .gof-m-jump { animation: gofJump .8s cubic-bezier(.3,.6,.4,1); }
   .gof-hint { position: absolute; left: -2%; top: 2%; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 14px; color: var(--oro);
     transform: rotate(-8deg); transition: opacity .4s ease; animation: gofHint 2.2s ease-in-out infinite; }
@@ -160,8 +160,6 @@
   .gof-js.gof-in .gof-lb { animation: gofOn .45s ease forwards; animation-delay: calc(var(--k) * 38ms + .15s); }
   .gof-js.gof-in .gof-lb b::after { animation: gofGlow var(--d, 2.4s) ease-in-out calc(var(--k) * 38ms + .6s) infinite; }
 
-  @keyframes gofBreath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .986); } }
-  @keyframes gofWave   { 0%, 100% { transform: rotate(-1.300deg); } 50% { transform: rotate(1.300deg); } }
   @keyframes gofJump   { 0%, 100% { transform: none; } 15% { transform: scale(1.05, .93); } 45% { transform: translateY(-7%) scale(.97, 1.04); } 75% { transform: scale(1.04, .95); } }
   @keyframes gofHint   { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
   @keyframes gofShine { to { background-position: 0% 0, 0 0; } }
@@ -184,11 +182,12 @@
   <div class="gof-lights" aria-hidden="true"></div>
   <div class="gof-in-wrap">
     <header class="gof-head">
-      <button type="button" class="gof-man" data-pose="0" hidden aria-label="Muñeco de nieve con el letrero de ofertas. Tócalo para que salude."
+      <button type="button" class="gof-man" hidden aria-label="Muñeco de nieve con el letrero de ofertas. Tócalo para que salude."
               data-msgs="{% if gof_tope > 0 %}HASTA|-{{ gof_tope }}%{% else %}OFERTAS|de Navidad{% endif %};ENVÍOS|a todo el país;POR TIEMPO|limitado">
         <span class="gof-hint" aria-hidden="true">Tócame</span>
         <span class="gof-m-lean"><span class="gof-m-jump"><span class="gof-m-body">
-          <span class="gof-m-img" data-src="{{ gof_muneco | file_url }}"></span>
+          <img class="gof-m-anim" alt="" data-src="{{ gof_muneco | file_url }}">
+          <img class="gof-m-feliz" alt="" data-src="{{ gof_muneco_feliz | file_url }}">
           <span class="gof-m-txt" aria-hidden="true"><span class="gof-m-t1">Hasta</span><span class="gof-m-t2">-30%</span></span>
         </span></span></span>
       </button>
@@ -267,15 +266,28 @@
     if (tick()) var iv = setInterval(function () { if (!tick()) clearInterval(iv); }, 1000);
   }
 
-  /* muñeco: carga la imagen, cambia de pose (saludo, parpadeo), se inclina hacia el dedo o el mouse y reacciona al tocarlo */
+  /* muñeco: carga las imágenes cuando el cliente se acerca a la sección, se inclina hacia el dedo o el mouse y reacciona al tocarlo */
   var man = sec.querySelector('.gof-man');
   if (man) {
-    var img = man.querySelector('.gof-m-img'), lean = man.querySelector('.gof-m-lean'), txt = man.querySelector('.gof-m-txt'), t1 = man.querySelector('.gof-m-t1'), t2 = man.querySelector('.gof-m-t2');
-    var msgs = (man.getAttribute('data-msgs') || '').split(';').map(function (m) { return m.split('|'); }), mi = 0, actx = null, ocupado = false;
-    // si la imagen no está subida, el muñeco simplemente no aparece
-    var pre = new Image();
-    pre.onload = function () { img.style.backgroundImage = 'url("' + pre.src + '")'; man.hidden = false; };
-    pre.src = img.getAttribute('data-src');
+    var anim = man.querySelector('.gof-m-anim'), feliz = man.querySelector('.gof-m-feliz'), lean = man.querySelector('.gof-m-lean'), txt = man.querySelector('.gof-m-txt'), t1 = man.querySelector('.gof-m-t1'), t2 = man.querySelector('.gof-m-t2');
+    var msgs = (man.getAttribute('data-msgs') || '').split(';').map(function (m) { return m.split('|'); }), mi = 0, actx = null, hayFeliz = false;
+    // si las imágenes no están subidas, el muñeco simplemente no aparece
+    var cargar = function () {
+      var pf = new Image();
+      pf.onload = function () {
+        feliz.src = pf.src; hayFeliz = true;
+        if (reduce) { anim.src = pf.src; man.hidden = false; } // con "reducir movimiento" se muestra quieto
+      };
+      pf.src = feliz.getAttribute('data-src');
+      if (reduce) return;
+      var pa = new Image();
+      pa.onload = function () { anim.src = pa.src; man.hidden = false; };
+      pa.src = anim.getAttribute('data-src');
+    };
+    if ('IntersectionObserver' in window) {
+      var ioM = new IntersectionObserver(function (en) { if (en[en.length - 1].isIntersecting) { ioM.disconnect(); cargar(); } }, { rootMargin: '700px 0px' });
+      ioM.observe(sec);
+    } else cargar();
     var pinta = function () {
       var n = msgs[mi][1].length;
       t1.textContent = msgs[mi][0];
@@ -283,15 +295,7 @@
       t2.className = 'gof-m-t2' + (n <= 5 ? '' : n <= 9 ? ' gof-m-md' : ' gof-m-sm');
     };
     pinta();
-    var visible = function () { return sec.classList.contains('gof-in') && !sec.classList.contains('gof-off') && !document.hidden; };
-    var pose = function (p, ms) {
-      if (ocupado) return;
-      man.setAttribute('data-pose', p);
-      setTimeout(function () { if (!ocupado) man.setAttribute('data-pose', 0); }, ms);
-    };
     if (!reduce) {
-      (function parpadea() { setTimeout(function () { if (visible() && man.getAttribute('data-pose') === '0') pose(2, 160); parpadea(); }, rnd(2600, 5200)); })();
-      (function saluda() { setTimeout(function () { if (visible()) pose(1, 1500); saluda(); }, rnd(5500, 8000)); })();
       var raf = 0, px = 0;
       sec.addEventListener('pointermove', function (e) {
         px = e.clientX;
@@ -325,10 +329,11 @@
       txt.classList.add('gof-flip');
       setTimeout(function () { mi = (mi + 1) % msgs.length; pinta(); txt.classList.remove('gof-flip'); }, 230);
       // carita feliz
-      ocupado = true;
-      man.setAttribute('data-pose', 3);
-      clearTimeout(man._t);
-      man._t = setTimeout(function () { ocupado = false; man.setAttribute('data-pose', 0); }, 1100);
+      if (hayFeliz) {
+        man.classList.add('gof-feliz');
+        clearTimeout(man._t);
+        man._t = setTimeout(function () { man.classList.remove('gof-feliz'); }, 1100);
+      }
       if (reduce) return;
       man.classList.remove('gof-hi'); void man.offsetWidth; man.classList.add('gof-hi');
       setTimeout(function () { man.classList.remove('gof-hi'); }, 850);
